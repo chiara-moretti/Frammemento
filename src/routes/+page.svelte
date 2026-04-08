@@ -2,6 +2,8 @@
     import ClickCounter from "$lib/components/ClickCounter.svelte";
     // è possibile importare componenti da altri file e usarli come tag HTML
     import CanvasSquare from "$lib/components/CanvasSquare.svelte";
+    import ToDoList from "$lib/components/ToDoList.svelte";
+    
     let count = $state(5);
 </script>
 
@@ -10,9 +12,14 @@
 
 <ClickCounter bind:initialCount={count}/>
 
-<p>count from parent is {count}</p>
+{#if count > 10 && count < 20}
+    <p>count from parent is {count}</p>
+{:else if count > 30}
+    <p>that's a lot of clicks!</p>   
+{/if}
 
 <CanvasSquare />
+<ToDoList />
 
 <style>
     h1 {
