@@ -1,14 +1,18 @@
 <script>
+    import { website } from "$lib/state.svelte.js";
     import ClickCounter from "$lib/components/ClickCounter.svelte";
     // è possibile importare componenti da altri file e usarli come tag HTML
     import CanvasSquare from "$lib/components/CanvasSquare.svelte";
     import ToDoList from "$lib/components/ToDoList.svelte";
-    
+    import TitleEditor from "$lib/components/TitleEditor.svelte";
+
     let count = $state(5);
 </script>
 
-<h1>Welcome to SvelteKit</h1>
+<h1>{website.title}</h1>
 <p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+
+<TitleEditor />
 
 <ClickCounter bind:initialCount={count}/>
 
