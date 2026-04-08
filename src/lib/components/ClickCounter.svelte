@@ -1,5 +1,5 @@
 <script>
-    let { initialCount: count } = $props();
+    let { initialCount: count = $bindable()} = $props();
     // i props sono un oggetto che contiene tutte le proprietà passate al componente, quindi è possibile accedervi tramite $props() o tramite la sintassi $props.nomeProp
 
     let doubled = $derived(count * 2);
@@ -8,8 +8,8 @@
 
 <h3>ClickCounter</h3>
 
-<button onclick={() => initialCount++}>
-    clicks: {initialCount}
+<button onclick={() => count++}>
+    clicks: {count}
 </button>
 
 <span>doubled is {doubled}</span>
