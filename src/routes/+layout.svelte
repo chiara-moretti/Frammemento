@@ -62,7 +62,7 @@
 				<a href={`${base}/temi/citta`} onclick={closeMobileMenu}>città</a>
 			</div>
 		</div>
-		<a href={`${base}/#about`} onclick={closeMobileMenu}>about</a>
+		<a href={`${base}/about`} onclick={closeMobileMenu}>about</a>
 		<a href={`${base}/album`} onclick={closeMobileMenu}>album</a>
 		<a href="https://instagram.com/frammemento" target="_blank" rel="noreferrer" onclick={closeMobileMenu}
 			>@frammemento</a
