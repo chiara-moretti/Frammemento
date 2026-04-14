@@ -187,7 +187,7 @@
 			position: sticky;
 			top: 0;
 			z-index: 20;
-			margin-top: 4.3rem;
+			margin-top: 0;
 			padding: 1rem;
 			border: 3px solid #000;
 			min-height: auto;

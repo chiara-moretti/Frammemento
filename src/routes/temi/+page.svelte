@@ -1,18 +1,10 @@
 <script>
-	import { base } from '$app/paths';
-
 	let { data } = $props();
 </script>
 
 <main class="temi-page">
 	<header class="temi-header">
 		<p class="label">Portfolio Fotografico</p>
-		<nav class="top-nav" aria-label="Navigazione principale">
-			<a href={`${base}/`}>home</a>
-			<a href={`${base}/album`}>album</a>
-			<a href={`${base}/temi`}>temi</a>
-			<a href="https://instagram.com/frammemento" target="_blank" rel="noreferrer">@frammemento</a>
-		</nav>
 		<h1>Temi</h1>
 	</header>
 
@@ -51,7 +43,7 @@
 	.temi-header {
 		position: relative;
 		border-bottom: 5px solid #000;
-		padding: 2rem 0 0.7rem;
+		padding: 0 0 0.7rem;
 	}
 
 	.label {
@@ -61,29 +53,6 @@
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
 		color: #ff5f1f;
-	}
-
-	.top-nav {
-		position: absolute;
-		top: 0.25rem;
-		right: 0;
-		display: flex;
-		gap: 0.9rem;
-		font-size: 0.86rem;
-		font-weight: 700;
-		text-transform: uppercase;
-	}
-
-	.top-nav a {
-		color: #000;
-		text-decoration: none;
-		border-bottom: 2px solid transparent;
-	}
-
-	.top-nav a:hover,
-	.top-nav a:focus-visible {
-		color: #ff5f1f;
-		border-bottom-color: #ff5f1f;
 	}
 
 	h1 {
@@ -149,18 +118,6 @@
 	@media (max-width: 780px) {
 		.grid {
 			column-count: 2;
-		}
-
-		.temi-header {
-			padding-top: 3.8rem;
-		}
-
-		.top-nav {
-			left: 0;
-			right: 0;
-			justify-content: flex-end;
-			flex-wrap: wrap;
-			gap: 0.5rem 0.9rem;
 		}
 	}
 

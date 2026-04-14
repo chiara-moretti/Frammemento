@@ -1,9 +1,17 @@
 <script>
 	import { base } from '$app/paths';
+	import { page } from '$app/state';
 
 	let { children } = $props();
 	let isMobileMenuOpen = $state(false);
 	let isMobileThemesOpen = $state(false);
+	const homePath = `${base}/`;
+	/** @param {string} value */
+	const normalizePath = (value) => value.replace(/\/+$/, '') || '/';
+	const isHomePage = $derived(normalizePath(page.url.pathname) === normalizePath(homePath));
+	const mobileMainOffset = $derived(
+		!isMobileMenuOpen ? '0rem' : isHomePage ? (isMobileThemesOpen ? '18rem' : '13rem') : '16.8rem'
+	);
 
 	const toggleMobileMenu = () => {
 		isMobileMenuOpen = !isMobileMenuOpen;
@@ -30,17 +38,23 @@
 	</button>
 
 	<nav class="top-nav" aria-label="Navigazione principale" class:mobile-open={isMobileMenuOpen} id="mobile-menu">
+		{#if !isHomePage}
+			<a href={homePath} onclick={closeMobileMenu}>home</a>
+		{/if}
 		<div class="nav-dropdown">
 			<a href={`${base}/temi`} class="temi-link temi-desktop" onclick={closeMobileMenu}>temi</a>
-			<button
-				class="temi-mobile-toggle"
-				type="button"
-				aria-expanded={isMobileThemesOpen}
-				onclick={() => (isMobileThemesOpen = !isMobileThemesOpen)}
-			>
-				<span>temi</span>
-				<span class="submenu-caret" class:open={isMobileThemesOpen}>▾</span>
-			</button>
+			<div class="temi-mobile-row">
+				<a href={`${base}/temi`} class="temi-mobile-link" onclick={closeMobileMenu}>temi</a>
+				<button
+					class="temi-mobile-toggle"
+					type="button"
+					aria-expanded={isMobileThemesOpen}
+					aria-label="Apri sotto menù temi"
+					onclick={() => (isMobileThemesOpen = !isMobileThemesOpen)}
+				>
+					<span class="submenu-caret" class:open={isMobileThemesOpen}>▾</span>
+				</button>
+			</div>
 			<div class="submenu" class:mobile-open={isMobileThemesOpen}>
 				<a href={`${base}/temi/persone`} onclick={closeMobileMenu}>persone</a>
 				<a href={`${base}/temi/ritratti`} onclick={closeMobileMenu}>ritratti</a>
@@ -56,7 +70,11 @@
 	</nav>
 </header>
 
-<main class:mobile-menu-open={isMobileMenuOpen}>
+<main
+	class:mobile-menu-open={isMobileMenuOpen}
+	class:mobile-submenu-open={isMobileMenuOpen && isMobileThemesOpen}
+	style={`--mobile-main-offset: ${mobileMainOffset};`}
+>
 	{@render children()}
 </main>
 
@@ -73,6 +91,11 @@
 	}
 
 	.temi-mobile-toggle {
+		display: none;
+	}
+
+	.temi-mobile-row,
+	.temi-mobile-link {
 		display: none;
 	}
 
@@ -124,20 +147,40 @@
 	}
 
 	@media (min-width: 741px) {
+		.nav-dropdown {
+			padding-bottom: 0.7rem;
+			margin-bottom: -0.7rem;
+		}
+
+		.submenu {
+			display: flex;
+			opacity: 0;
+			visibility: hidden;
+			pointer-events: none;
+			transition: opacity 0.16s ease, visibility 0s linear 0.28s;
+		}
+
 		.nav-dropdown:hover .submenu,
 		.nav-dropdown:focus-within .submenu {
-			display: flex;
+			opacity: 1;
+			visibility: visible;
+			pointer-events: auto;
+			transition-delay: 0s;
 		}
 	}
 
 	@media (max-width: 740px) {
 		main {
-			padding-top: 0;
+			padding-top: 4.6rem;
 			transition: padding-top 0.2s ease;
 		}
 
 		main.mobile-menu-open {
-			padding-top: 8.6rem;
+			padding-top: var(--mobile-main-offset);
+		}
+
+		main.mobile-submenu-open {
+			padding-top: var(--mobile-main-offset);
 		}
 
 		.site-header {
@@ -167,7 +210,7 @@
 
 		.top-nav {
 			position: absolute;
-			top: calc(100% + 0.4rem);
+			top: calc(100% + 1rem);
 			left: 1rem;
 			right: 1rem;
 			display: none;
@@ -197,32 +240,54 @@
 			display: none;
 		}
 
-		.temi-mobile-toggle {
-			display: block;
-			width: 100%;
+		.temi-mobile-row {
 			display: flex;
+			width: 100%;
 			align-items: center;
 			justify-content: flex-end;
-			gap: 0.45rem;
-			padding: 0.1rem 0;
-			border: 0;
-			background: transparent;
+			gap: 0.5rem;
+		}
+
+		.temi-mobile-link {
+			display: block;
+			text-align: right;
 			color: #000;
-			font: inherit;
+			text-decoration: none;
+			border-bottom: 2px solid transparent;
 			font-size: 0.86rem;
 			font-weight: 700;
 			text-transform: uppercase;
 			letter-spacing: 0.05em;
-			text-align: right;
-			cursor: pointer;
-			border-bottom: 2px solid transparent;
 			transition: color 0.16s ease, border-color 0.16s ease;
+		}
+
+		.temi-mobile-link:hover,
+		.temi-mobile-link:focus-visible {
+			color: #ff5f1f;
+			border-bottom-color: #ff5f1f;
+		}
+
+		.temi-mobile-toggle {
+			display: block;
+			width: auto;
+			display: flex;
+			align-items: center;
+			justify-content: flex-end;
+			gap: 0;
+			padding: 0.1rem 0 0.1rem 0.2rem;
+			border: 0;
+			background: transparent;
+			color: #000;
+			font: inherit;
+			font-size: 0.8rem;
+			font-weight: 700;
+			cursor: pointer;
+			transition: color 0.16s ease;
 		}
 
 		.temi-mobile-toggle:hover,
 		.temi-mobile-toggle:focus-visible {
 			color: #ff5f1f;
-			border-bottom-color: #ff5f1f;
 		}
 
 		.submenu-caret {

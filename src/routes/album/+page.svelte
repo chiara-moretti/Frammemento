@@ -5,41 +5,60 @@
 	const albumPdf = `${base}/album.pdf`;
 	/** @type {HTMLDivElement | undefined} */
 	let viewerTrack = undefined;
+	let useNativeFallback = $state(false);
 	let isLoading = $state(true);
 	let loadError = $state('');
 
 	onMount(async () => {
 		if (!viewerTrack) return;
+		const track = viewerTrack;
 
 		try {
-			const pdfjs = await import('pdfjs-dist');
-			const workerModule = await import('pdfjs-dist/build/pdf.worker.min.mjs?url');
-			pdfjs.GlobalWorkerOptions.workerSrc = workerModule.default;
+			const isMobileViewport = window.matchMedia('(max-width: 740px)').matches;
+			const renderScale = isMobileViewport ? 1 : 1.2;
+			const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
+			/** @param {boolean} useWorker */
+			const renderPdf = async (useWorker) => {
+				track.innerHTML = '';
 
-			const loadingTask = pdfjs.getDocument(albumPdf);
-			const pdf = await loadingTask.promise;
+				/** @type {any} */
+				const documentSource = useWorker ? albumPdf : { url: albumPdf, disableWorker: true };
 
-			for (let pageNum = 1; pageNum <= pdf.numPages; pageNum += 1) {
-				const page = await pdf.getPage(pageNum);
-				const viewport = page.getViewport({ scale: 1.2 });
+				const loadingTask = pdfjs.getDocument(documentSource);
+				const pdf = await loadingTask.promise;
 
-				const pageShell = document.createElement('article');
-				pageShell.className = 'pdf-page';
+				for (let pageNum = 1; pageNum <= pdf.numPages; pageNum += 1) {
+					const page = await pdf.getPage(pageNum);
+					const viewport = page.getViewport({ scale: renderScale });
 
-				const canvas = document.createElement('canvas');
-				const context = canvas.getContext('2d');
-				if (!context) throw new Error('Canvas context non disponibile');
+					const pageShell = document.createElement('article');
+					pageShell.className = 'pdf-page';
 
-				canvas.width = viewport.width;
-				canvas.height = viewport.height;
+					const canvas = document.createElement('canvas');
+					const context = canvas.getContext('2d');
+					if (!context) throw new Error('Canvas context non disponibile');
 
-				pageShell.appendChild(canvas);
-				viewerTrack.appendChild(pageShell);
+					canvas.width = viewport.width;
+					canvas.height = viewport.height;
 
-				await page.render({ canvasContext: context, viewport, canvas }).promise;
+					pageShell.appendChild(canvas);
+					track.appendChild(pageShell);
+
+					await page.render({ canvasContext: context, viewport, canvas }).promise;
+				}
+			};
+
+			try {
+				const workerModule = await import('pdfjs-dist/legacy/build/pdf.worker.min.mjs?url');
+				pdfjs.GlobalWorkerOptions.workerSrc = workerModule.default;
+				await renderPdf(true);
+			} catch (workerError) {
+				console.warn('Worker PDF non disponibile, uso fallback senza worker.', workerError);
+				await renderPdf(false);
 			}
 		} catch (error) {
-			loadError = 'Non riesco a caricare il PDF in modalità orizzontale.';
+			useNativeFallback = true;
+			loadError = '';
 			console.error(error);
 		} finally {
 			isLoading = false;
@@ -50,32 +69,24 @@
 <main class="album-page">
 	<header class="album-header">
 		<p class="label">Portfolio Fotografico</p>
-		<nav class="top-nav" aria-label="Navigazione principale">
-			<div class="nav-dropdown">
-				<a href={`${base}/temi`} class="temi-link">temi</a>
-				<div class="submenu">
-					<a href={`${base}/temi/persone`}>persone</a>
-					<a href={`${base}/temi/ritratti`}>ritratti</a>
-					<a href={`${base}/temi/natura`}>natura</a>
-					<a href={`${base}/temi/citta`}>città</a>
-				</div>
-			</div>
-			<a href="#about">about</a>
-			<a href={`${base}/album`}>album</a>
-			<a href={`${base}/`}>home</a>
-			<a href="https://instagram.com/frammemento" target="_blank" rel="noreferrer">@frammemento</a>
-		</nav>
 		<h1>Album 2025</h1>
 	</header>
 
 	<section id="about" class="frame-wrap" aria-label="Visualizzatore album con sfoglio orizzontale">
 		{#if isLoading}
 			<p class="status">Caricamento album...</p>
+		{:else if useNativeFallback}
+			<iframe
+				class="native-pdf"
+				title="Album PDF"
+				src={`${albumPdf}#view=FitH`}
+				loading="lazy"
+			></iframe>
 		{:else if loadError}
 			<p class="status error">{loadError}</p>
 		{/if}
 
-		<div class="pdf-track" bind:this={viewerTrack}></div>
+		<div class="pdf-track" class:hidden={useNativeFallback} bind:this={viewerTrack}></div>
 	</section>
 </main>
 
@@ -110,7 +121,7 @@
 		position: relative;
 		display: grid;
 		border-bottom: 4px solid #000;
-		padding: 1.8rem 0 0.6rem;
+		padding: 0 0 0.6rem;
 	}
 
 	.label {
@@ -122,66 +133,11 @@
 		color: #ff5f1f;
 	}
 
-	.top-nav {
-		position: absolute;
-		top: 0;
-		right: 0;
-		display: flex;
-		gap: 0.9rem;
-		font-size: 0.86rem;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		font-weight: 700;
-	}
-
 	h1 {
 		margin: 0;
 		font-size: clamp(1.7rem, 5vw, 3.2rem);
 		text-transform: uppercase;
 		letter-spacing: -0.02em;
-	}
-
-	.top-nav a {
-		color: #000;
-		text-decoration: none;
-		border-bottom: 2px solid transparent;
-		padding-bottom: 0.1rem;
-	}
-
-	.top-nav a:hover,
-	.top-nav a:focus-visible,
-	.temi-link:hover,
-	.temi-link:focus-visible {
-		border-bottom-color: #ff5f1f;
-		color: #ff5f1f;
-	}
-
-	.nav-dropdown {
-		position: relative;
-	}
-
-	.submenu {
-		position: absolute;
-		top: calc(100% + 0.35rem);
-		left: 50%;
-		transform: translateX(-50%);
-		display: none;
-		flex-direction: column;
-		gap: 0.35rem;
-		padding: 0.5rem 0.6rem;
-		border: 2px solid #000;
-		background: #fff;
-		min-width: 8.5rem;
-		z-index: 10;
-	}
-
-	.nav-dropdown:hover .submenu,
-	.nav-dropdown:focus-within .submenu {
-		display: flex;
-	}
-
-	.submenu a {
-		padding: 0.1rem 0;
 	}
 
 	.frame-wrap {
@@ -200,6 +156,17 @@
 		align-items: center;
 		width: max-content;
 		min-width: 100%;
+	}
+
+	.pdf-track.hidden {
+		display: none;
+	}
+
+	.native-pdf {
+		width: 100%;
+		height: 100%;
+		border: 2px solid #000;
+		background: #fff;
 	}
 
 	:global(.pdf-page) {
@@ -236,16 +203,46 @@
 	}
 
 	@media (max-width: 740px) {
-		.album-header {
-			padding-top: 3.8rem;
+		.album-page {
+			height: auto;
+			min-height: calc(100dvh - 4.6rem);
 		}
 
-		.top-nav {
-			left: 0;
-			right: 0;
-			justify-content: flex-end;
-			flex-wrap: wrap;
-			gap: 0.5rem 0.9rem;
+		.album-header {
+			padding-top: 0.2rem;
+		}
+
+		.frame-wrap {
+			height: 62dvh;
+			min-height: 62dvh;
+			padding: 0.55rem;
+			overflow-x: auto;
+			overflow-y: hidden;
+			-webkit-overflow-scrolling: touch;
+			scroll-snap-type: x proximity;
+			touch-action: pan-x;
+		}
+
+		.pdf-track {
+			height: 100%;
+			gap: 0.65rem;
+			align-items: stretch;
+		}
+
+		:global(.pdf-page) {
+			height: 100%;
+			padding: 0.3rem;
+		}
+
+		:global(.pdf-page canvas) {
+			width: auto;
+			height: 100%;
+			max-height: 100%;
+		}
+
+		.native-pdf {
+			height: 100%;
+			min-height: 0;
 		}
 	}
 </style>
