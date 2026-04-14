@@ -52,6 +52,9 @@
 
 		<div class="album">
 			<iframe title="Portfolio analogico" src={`${albumPdf}#zoom=page-width`} loading="lazy"></iframe>
+			<a class="mobile-pdf-link" href={albumPdf} target="_blank" rel="noopener noreferrer">
+				Apri PDF completo
+			</a>
 		</div>
 	</section>
 </main>
@@ -156,6 +159,10 @@
 		min-height: 0;
 	}
 
+	.mobile-pdf-link {
+		display: none;
+	}
+
 	@media (min-width: 980px) {
 		.album {
 			order: 1;
@@ -232,6 +239,22 @@
 		iframe {
 			border: 2px solid #000;
 			min-height: 0;
+		}
+
+		.mobile-pdf-link {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			margin-top: 0.55rem;
+			padding: 0.55rem 0.75rem;
+			border: 2px solid #000;
+			background: #fff;
+			color: #000;
+			text-decoration: none;
+			font-size: 0.82rem;
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
 		}
 	}
 </style>

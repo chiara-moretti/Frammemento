@@ -10,7 +10,7 @@
 	const normalizePath = (value) => value.replace(/\/+$/, '') || '/';
 	const isHomePage = $derived(normalizePath(page.url.pathname) === normalizePath(homePath));
 	const mobileMainOffset = $derived(
-		!isMobileMenuOpen ? '0rem' : isHomePage ? (isMobileThemesOpen ? '18rem' : '13rem') : '16.8rem'
+		!isMobileMenuOpen ? '0rem' : isHomePage ? (isMobileThemesOpen ? '19rem' : '14.5rem') : '17.5rem'
 	);
 
 	const toggleMobileMenu = () => {
@@ -187,7 +187,7 @@
 			top: 0;
 			left: 0;
 			right: 0;
-			padding: 0.75rem 0.45rem;
+			padding: 0.75rem 1rem;
 			background: #fff;
 			border-bottom: 3px solid #000;
 		}
@@ -211,8 +211,8 @@
 		.top-nav {
 			position: absolute;
 			top: calc(100% + 1rem);
-			left: 0.45rem;
-			right: 0.45rem;
+			left: 1rem;
+			right: 1rem;
 			display: none;
 			flex-direction: column;
 			align-items: stretch;
