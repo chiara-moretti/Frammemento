@@ -170,10 +170,6 @@
 	}
 
 	@media (max-width: 740px) {
-		:root {
-			--mobile-gutter: 0.45rem;
-		}
-
 		main {
 			padding-top: 4.6rem;
 			transition: padding-top 0.2s ease;
@@ -191,7 +187,7 @@
 			top: 0;
 			left: 0;
 			right: 0;
-			padding: 0.75rem var(--mobile-gutter);
+			padding: 0.75rem 0.45rem;
 			background: #fff;
 			border-bottom: 3px solid #000;
 		}
@@ -215,8 +211,8 @@
 		.top-nav {
 			position: absolute;
 			top: calc(100% + 1rem);
-			left: var(--mobile-gutter);
-			right: var(--mobile-gutter);
+			left: 0.45rem;
+			right: 0.45rem;
 			display: none;
 			flex-direction: column;
 			align-items: stretch;
