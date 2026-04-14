@@ -12,7 +12,13 @@
 		{#each data.photos as photo}
 			<article class={`card ${photo.size}`}>
 				<div class="photo-wrap">
-					<img src={photo.imageUrl} alt={`Foto categoria ${photo.category}`} loading="lazy" />
+					{#if photo.detailHref}
+						<a class="photo-card-link" href={photo.detailHref} aria-label="Apri la foto">
+							<img src={photo.imageUrl} alt={`Foto categoria ${photo.category}`} loading="lazy" />
+						</a>
+					{:else}
+						<img src={photo.imageUrl} alt={`Foto categoria ${photo.category}`} loading="lazy" />
+					{/if}
 				</div>
 				<h2>{photo.category}</h2>
 			</article>
@@ -99,6 +105,19 @@
 
 	.card.large .photo-wrap {
 		aspect-ratio: 1 / 1;
+	}
+
+	.photo-card-link {
+		display: block;
+		width: 100%;
+		height: 100%;
+		color: inherit;
+		text-decoration: none;
+	}
+
+	.photo-card-link:focus-visible {
+		outline: 3px solid #ff5f1f;
+		outline-offset: 2px;
 	}
 
 	img {

@@ -1,4 +1,5 @@
 <script>
+	/** @type {{ title: string; photos?: { url: string; alt: string; detailHref?: string }[] }} */
 	let { title, photos = [] } = $props();
 
 	let currentIndex = $state(0);
@@ -36,13 +37,28 @@
 			<button class="nav prev" type="button" onclick={goPrev} aria-label="Foto precedente">‹</button>
 
 			<figure class="frame">
-				<img src={currentPhoto.url} alt={currentPhoto.alt} loading="eager" />
+				{#if currentPhoto.detailHref}
+					<a
+						class="photo-open"
+						href={currentPhoto.detailHref}
+						aria-label="Apri questa foto a schermo intero"
+					>
+						<img src={currentPhoto.url} alt={currentPhoto.alt} loading="eager" />
+					</a>
+				{:else}
+					<img src={currentPhoto.url} alt={currentPhoto.alt} loading="eager" />
+				{/if}
 			</figure>
 
 			<button class="nav next" type="button" onclick={goNext} aria-label="Foto successiva">›</button>
 		</section>
 
-		<p class="counter">{currentIndex + 1} / {photos.length}</p>
+		<div class="counter-bar" role="status" aria-live="polite" aria-atomic="true">
+			<span class="counter-label">foto</span>
+			<span class="counter-current">{currentIndex + 1}</span>
+			<span class="counter-sep" aria-hidden="true">/</span>
+			<span class="counter-total">{photos.length}</span>
+		</div>
 	{:else}
 		<p class="empty">Nessuna foto disponibile per questa categoria.</p>
 	{/if}
@@ -51,6 +67,7 @@
 <style>
 	:root {
 		--slider-border-size: 3px;
+		--slider-left-margin: 1rem;
 	}
 
 	:global(body) {
@@ -63,7 +80,7 @@
 	.theme-slider {
 		height: 100dvh;
 		min-height: 100dvh;
-		padding: 0.8rem 1rem 0.65rem;
+		padding: 0.8rem 1rem 1.5rem;
 		box-sizing: border-box;
 		display: grid;
 		grid-template-rows: auto 1fr auto;
@@ -100,6 +117,10 @@
 		align-items: stretch;
 		gap: 0.75rem;
 		margin-top: 0.8rem;
+		margin-left: var(--slider-left-margin);
+		width: calc(100% - var(--slider-left-margin));
+		max-width: calc(100% - var(--slider-left-margin));
+		box-sizing: border-box;
 	}
 
 	.frame {
@@ -118,7 +139,24 @@
 		overflow: hidden;
 	}
 
-	img {
+	.photo-open {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		height: 100%;
+		min-height: 0;
+		color: inherit;
+		text-decoration: none;
+		cursor: pointer;
+	}
+
+	.photo-open:focus-visible {
+		outline: 3px solid #ff5f1f;
+		outline-offset: 2px;
+	}
+
+	.photo-open img {
 		width: 100%;
 		height: 100%;
 		max-width: 100%;
@@ -150,19 +188,80 @@
 		border-color: #ff5f1f;
 	}
 
-	.counter,
+	.counter-bar {
+		display: flex;
+		align-items: baseline;
+		justify-content: center;
+		gap: 0.45rem;
+		margin: 0.8rem 0 0.35rem var(--slider-left-margin);
+		width: calc(100% - var(--slider-left-margin));
+		max-width: calc(100% - var(--slider-left-margin));
+		box-sizing: border-box;
+		padding: 0.45rem 0.75rem;
+		border: var(--slider-border-size) solid #000;
+		background: #fff;
+		box-shadow: 0 4px 0 #000;
+		font-size: 0.78rem;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		line-height: 1;
+		flex-shrink: 0;
+		min-height: 0;
+	}
+
+	.counter-label {
+		margin-right: 0.15rem;
+		font-size: 1em;
+		line-height: 1;
+		color: #000;
+	}
+
+	.counter-current {
+		color: #ff5f1f;
+		font-size: 1em;
+		line-height: 1;
+		min-width: 1.35ch;
+		text-align: center;
+	}
+
+	.counter-sep {
+		color: #000;
+		opacity: 0.45;
+		font-weight: 800;
+		font-size: 1em;
+		line-height: 1;
+	}
+
+	.counter-total {
+		color: #000;
+		font-size: 1em;
+		line-height: 1;
+		min-width: 1.35ch;
+		text-align: center;
+	}
+
 	.empty {
-		margin: 0;
+		margin: 0.8rem 0 0.35rem var(--slider-left-margin);
+		width: calc(100% - var(--slider-left-margin));
+		max-width: calc(100% - var(--slider-left-margin));
+		box-sizing: border-box;
+		padding: 0.45rem 0.75rem;
+		border: var(--slider-border-size) solid #000;
+		background: #fff7f2;
 		font-size: 0.64rem;
+		font-weight: 700;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
+		flex-shrink: 0;
 	}
 
 	@media (max-width: 740px) {
 		.theme-slider {
+			--slider-left-margin: 0;
 			height: calc(100dvh - 4.6rem);
 			min-height: calc(100dvh - 4.6rem);
-			padding: 0.45rem 0.45rem 0.4rem;
+			padding: 0.45rem 1rem 1.1rem;
 			grid-template-rows: auto minmax(0, 1fr) auto;
 			gap: 0.28rem;
 			overflow: hidden;
@@ -173,6 +272,9 @@
 			grid-template-rows: 1fr;
 			gap: 0.38rem;
 			margin-top: 0.28rem;
+			margin-left: var(--slider-left-margin);
+			width: calc(100% - var(--slider-left-margin));
+			max-width: calc(100% - var(--slider-left-margin));
 		}
 
 		.frame {
@@ -202,8 +304,20 @@
 			line-height: 1.05;
 		}
 
-		.counter,
+		.counter-bar {
+			margin: 0.28rem 0 0.35rem var(--slider-left-margin);
+			width: calc(100% - var(--slider-left-margin));
+			max-width: calc(100% - var(--slider-left-margin));
+			padding: 0.38rem 0.55rem;
+			font-size: 0.7rem;
+			box-shadow: 0 3px 0 #000;
+			gap: 0.35rem;
+		}
+
 		.empty {
+			margin: 0.28rem 0 0.35rem var(--slider-left-margin);
+			width: calc(100% - var(--slider-left-margin));
+			max-width: calc(100% - var(--slider-left-margin));
 			font-size: 0.58rem;
 		}
 	}
