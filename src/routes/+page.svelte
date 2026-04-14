@@ -180,7 +180,6 @@
 			padding: 1rem;
 			overflow-y: auto;
 			-webkit-overflow-scrolling: touch;
-			scroll-snap-type: none;
 		}
 
 		.hero {
@@ -218,18 +217,20 @@
 		}
 
 		.album {
-			order: 1;
-			height: min(58dvh, 32rem);
+			order: 0;
+			border: 3px solid #ff5f1f;
+			height: min(66dvh, 36rem);
 			min-height: 0;
 			padding: 0.6rem;
 		}
 
 		.manifesto {
+			display: block;
 			order: 2;
-			min-height: calc(100dvh - 2rem);
 		}
 
 		iframe {
+			border: 2px solid #000;
 			min-height: 0;
 		}
 	}
