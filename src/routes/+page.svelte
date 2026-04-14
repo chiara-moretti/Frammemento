@@ -7,20 +7,6 @@
 <main class="page">
 	<section class="hero">
 		<p class="label">Portfolio Fotografico</p>
-		<nav class="top-nav" aria-label="Navigazione principale">
-			<div class="nav-dropdown">
-				<a href={`${base}/temi`} class="temi-link">temi</a>
-				<div class="submenu">
-					<a href={`${base}/temi/persone`}>persone</a>
-					<a href={`${base}/temi/ritratti`}>ritratti</a>
-					<a href={`${base}/temi/natura`}>natura</a>
-					<a href={`${base}/temi/citta`}>città</a>
-				</div>
-			</div>
-			<a href="#about">about</a>
-			<a href={`${base}/album`}>album</a>
-			<a href="https://instagram.com/frammemento" target="_blank" rel="noreferrer">@frammemento</a>
-		</nav>
 		<h1>Frammemento</h1>
 	</section>
 
@@ -65,7 +51,7 @@
 		</article>
 
 		<div class="album">
-			<iframe title="Portfolio analogico" src={`${albumPdf}#view=FitH`} loading="lazy"></iframe>
+			<iframe title="Portfolio analogico" src={`${albumPdf}#zoom=page-width`} loading="lazy"></iframe>
 		</div>
 	</section>
 </main>
@@ -101,61 +87,6 @@
 		position: relative;
 		padding: 2.5rem 1.25rem 1rem;
 		border-bottom: 6px solid #000;
-	}
-
-	.top-nav {
-		position: absolute;
-		top: 0.8rem;
-		right: 1.25rem;
-		display: flex;
-		gap: 0.9rem;
-		font-size: 0.86rem;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		font-weight: 700;
-	}
-
-	.top-nav a {
-		color: #000;
-		text-decoration: none;
-		border-bottom: 2px solid transparent;
-		padding-bottom: 0.1rem;
-	}
-
-	.top-nav a:hover,
-	.top-nav a:focus-visible,
-	.temi-link:hover,
-	.temi-link:focus-visible {
-		border-bottom-color: #ff5f1f;
-		color: #ff5f1f;
-	}
-
-	.nav-dropdown {
-		position: relative;
-	}
-
-	.submenu {
-		position: absolute;
-		top: calc(100% + 0.35rem);
-		left: 50%;
-		transform: translateX(-50%);
-		display: none;
-		flex-direction: column;
-		gap: 0.35rem;
-		padding: 0.5rem 0.6rem;
-		border: 2px solid #000;
-		background: #fff;
-		min-width: 8.5rem;
-		z-index: 10;
-	}
-
-	.nav-dropdown:hover .submenu,
-	.nav-dropdown:focus-within .submenu {
-		display: flex;
-	}
-
-	.submenu a {
-		padding: 0.1rem 0;
 	}
 
 	.label {
@@ -243,28 +174,32 @@
 		.page {
 			height: auto;
 			min-height: 100dvh;
-			display: flex;
-			flex-direction: column;
+			display: grid;
+			grid-template-rows: auto 1fr;
 			gap: 1rem;
 			padding: 1rem;
 			overflow-y: auto;
-			scroll-snap-type: y mandatory;
+			-webkit-overflow-scrolling: touch;
+			scroll-snap-type: none;
 		}
 
 		.hero {
-			padding: 3.8rem 1rem 1rem;
+			position: sticky;
+			top: 0;
+			z-index: 20;
+			margin-top: 4.3rem;
+			padding: 1rem;
 			border: 3px solid #000;
-			min-height: calc(100dvh - 2rem);
-			scroll-snap-align: start;
-			scroll-snap-stop: always;
+			min-height: auto;
+			background: #fff;
 		}
 
-		.top-nav {
-			left: 1rem;
-			right: 1rem;
-			justify-content: flex-end;
-			flex-wrap: wrap;
-			gap: 0.5rem 0.9rem;
+		h1 {
+			max-width: 100%;
+			font-size: clamp(1.7rem, 9.4vw, 2.75rem);
+			letter-spacing: -0.015em;
+			line-height: 1;
+			overflow-wrap: anywhere;
 		}
 
 		.content-grid {
@@ -273,14 +208,29 @@
 			gap: 1rem;
 			padding: 0;
 			height: auto;
+			min-height: auto;
 			overflow: visible;
 		}
 
 		.manifesto,
 		.album {
-			height: calc(100dvh - 2rem);
-			scroll-snap-align: start;
-			scroll-snap-stop: always;
+			height: auto;
+		}
+
+		.album {
+			order: 1;
+			height: min(58dvh, 32rem);
+			min-height: 0;
+			padding: 0.6rem;
+		}
+
+		.manifesto {
+			order: 2;
+			min-height: calc(100dvh - 2rem);
+		}
+
+		iframe {
+			min-height: 0;
 		}
 	}
 </style>
