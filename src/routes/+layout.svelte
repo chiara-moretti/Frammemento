@@ -129,7 +129,7 @@
 
 	.submenu {
 		position: absolute;
-		top: calc(100% + 0.35rem);
+		top: calc(100% + 0.18rem);
 		left: 50%;
 		transform: translateX(-50%);
 		display: none;
@@ -170,6 +170,10 @@
 	}
 
 	@media (max-width: 740px) {
+		:root {
+			--mobile-gutter: 0.45rem;
+		}
+
 		main {
 			padding-top: 4.6rem;
 			transition: padding-top 0.2s ease;
@@ -187,7 +191,7 @@
 			top: 0;
 			left: 0;
 			right: 0;
-			padding: 0.75rem 1rem;
+			padding: 0.75rem var(--mobile-gutter);
 			background: #fff;
 			border-bottom: 3px solid #000;
 		}
@@ -211,8 +215,8 @@
 		.top-nav {
 			position: absolute;
 			top: calc(100% + 1rem);
-			left: 1rem;
-			right: 1rem;
+			left: var(--mobile-gutter);
+			right: var(--mobile-gutter);
 			display: none;
 			flex-direction: column;
 			align-items: stretch;

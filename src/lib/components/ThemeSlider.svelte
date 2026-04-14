@@ -49,6 +49,10 @@
 </main>
 
 <style>
+	:root {
+		--slider-border-size: 3px;
+	}
+
 	:global(body) {
 		margin: 0;
 		background: #fff;
@@ -69,7 +73,7 @@
 	}
 
 	header {
-		border-bottom: 5px solid #000;
+		border-bottom: var(--slider-border-size) solid #000;
 		padding-bottom: 0.3rem;
 	}
 
@@ -93,37 +97,45 @@
 		min-height: 0;
 		display: grid;
 		grid-template-columns: auto minmax(0, 1fr) auto;
-		align-items: center;
+		align-items: stretch;
 		gap: 0.75rem;
+		margin-top: 0.8rem;
 	}
 
 	.frame {
 		margin: 0;
 		height: 100%;
 		min-height: 0;
-		border: 3px solid #000;
-		background: #f9f9f9;
-		display: grid;
-		place-items: center;
+		border: var(--slider-border-size) solid #000;
+		box-sizing: border-box;
+		background: #fff;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		justify-self: center;
 		width: 100%;
+		max-width: 100%;
 		overflow: hidden;
 	}
 
 	img {
+		width: 100%;
+		height: 100%;
 		max-width: 100%;
 		max-height: 100%;
-		width: auto;
-		height: auto;
 		object-fit: contain;
 		object-position: center;
+		background: #fff;
 		display: block;
+		margin: auto;
 	}
 
 	.nav {
 		height: 3.2rem;
 		width: 3.2rem;
-		border: 3px solid #000;
+		border: var(--slider-border-size) solid #000;
+		box-sizing: border-box;
+		padding: 0;
 		background: #fff;
 		color: #000;
 		font-size: 2rem;
@@ -148,44 +160,36 @@
 
 	@media (max-width: 740px) {
 		.theme-slider {
-			height: 100dvh;
-			min-height: 100dvh;
+			height: calc(100dvh - 4.6rem);
+			min-height: calc(100dvh - 4.6rem);
 			padding: 0.45rem 0.45rem 0.4rem;
-			grid-template-rows: auto minmax(0, 0.82fr) auto;
+			grid-template-rows: auto minmax(0, 1fr) auto;
 			gap: 0.28rem;
 			overflow: hidden;
 		}
 
 		.slider {
-			grid-template-columns: 1fr;
-			grid-template-rows: 1fr auto auto;
+			grid-template-columns: auto minmax(0, 1fr) auto;
+			grid-template-rows: 1fr;
 			gap: 0.38rem;
+			margin-top: 0.28rem;
 		}
 
 		.frame {
-			height: min(100%, 52dvh);
-			border-width: 2px;
-			width: min(100%, 92vw);
+			height: 100%;
+			width: 100%;
 		}
 
 		.nav {
-			width: 100%;
-			height: 1.85rem;
-			box-shadow: 0 2px 0 #000;
-			font-size: 1.1rem;
-		}
-
-		.prev {
-			order: 1;
-		}
-
-		.next {
-			order: 2;
+			width: 2.2rem;
+			height: 100%;
+			align-self: stretch;
+			box-shadow: none;
+			font-size: 1.35rem;
 		}
 
 		header {
 			padding-bottom: 0.28rem;
-			border-bottom-width: 2px;
 		}
 
 		.label {
