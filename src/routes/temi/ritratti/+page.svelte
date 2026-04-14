@@ -1,3 +1,7 @@
+<script>
+	import { base } from '$app/paths';
+</script>
+
 <main class="tema-page">
 	<header>
 		<p class="label">Temi</p>
@@ -5,11 +9,11 @@
 	</header>
 
 	<nav class="tema-nav" aria-label="Navigazione tema">
-		<a href="/">home</a>
-		<a href="/album">album</a>
-		<a href="/temi/persone">persone</a>
-		<a href="/temi/natura">natura</a>
-		<a href="/temi/citta">città</a>
+		<a href={`${base}/`}>home</a>
+		<a href={`${base}/album`}>album</a>
+		<a href={`${base}/temi/persone`}>persone</a>
+		<a href={`${base}/temi/natura`}>natura</a>
+		<a href={`${base}/temi/citta`}>città</a>
 	</nav>
 
 	<section class="content">

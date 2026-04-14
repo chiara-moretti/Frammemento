@@ -1,7 +1,8 @@
 <script>
 	import { onMount } from 'svelte';
+	import { base } from '$app/paths';
 
-	const albumPdf = '/album.pdf';
+	const albumPdf = `${base}/album.pdf`;
 	/** @type {HTMLDivElement | undefined} */
 	let viewerTrack = undefined;
 	let isLoading = $state(true);
@@ -51,23 +52,23 @@
 		<p class="label">Portfolio Fotografico</p>
 		<nav class="top-nav" aria-label="Navigazione principale">
 			<div class="nav-dropdown">
-				<a href="/temi" class="temi-link">temi</a>
+				<a href={`${base}/temi`} class="temi-link">temi</a>
 				<div class="submenu">
-					<a href="/temi/persone">persone</a>
-					<a href="/temi/ritratti">ritratti</a>
-					<a href="/temi/natura">natura</a>
-					<a href="/temi/citta">città</a>
+					<a href={`${base}/temi/persone`}>persone</a>
+					<a href={`${base}/temi/ritratti`}>ritratti</a>
+					<a href={`${base}/temi/natura`}>natura</a>
+					<a href={`${base}/temi/citta`}>città</a>
 				</div>
 			</div>
 			<a href="#about">about</a>
-			<a href="/album">album</a>
-			<a href="/">home</a>
+			<a href={`${base}/album`}>album</a>
+			<a href={`${base}/`}>home</a>
 			<a href="https://instagram.com/frammemento" target="_blank" rel="noreferrer">@frammemento</a>
 		</nav>
 		<h1>Album 2025</h1>
 	</header>
 
-	<section class="frame-wrap" aria-label="Visualizzatore album con sfoglio orizzontale">
+	<section id="about" class="frame-wrap" aria-label="Visualizzatore album con sfoglio orizzontale">
 		{#if isLoading}
 			<p class="status">Caricamento album...</p>
 		{:else if loadError}

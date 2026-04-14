@@ -1,4 +1,6 @@
 <script>
+	import { base } from '$app/paths';
+
 	let { data } = $props();
 </script>
 
@@ -6,9 +8,9 @@
 	<header class="temi-header">
 		<p class="label">Portfolio Fotografico</p>
 		<nav class="top-nav" aria-label="Navigazione principale">
-			<a href="/">home</a>
-			<a href="/album">album</a>
-			<a href="/temi">temi</a>
+			<a href={`${base}/`}>home</a>
+			<a href={`${base}/album`}>album</a>
+			<a href={`${base}/temi`}>temi</a>
 			<a href="https://instagram.com/frammemento" target="_blank" rel="noreferrer">@frammemento</a>
 		</nav>
 		<h1>Temi</h1>

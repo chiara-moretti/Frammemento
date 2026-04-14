@@ -1,5 +1,7 @@
 <script>
-	const albumPdf = '/album.pdf';
+	import { base } from '$app/paths';
+
+	const albumPdf = `${base}/album.pdf`;
 </script>
 
 <main class="page">
@@ -7,22 +9,22 @@
 		<p class="label">Portfolio Fotografico</p>
 		<nav class="top-nav" aria-label="Navigazione principale">
 			<div class="nav-dropdown">
-				<a href="/temi" class="temi-link">temi</a>
+				<a href={`${base}/temi`} class="temi-link">temi</a>
 				<div class="submenu">
-					<a href="/temi/persone">persone</a>
-					<a href="/temi/ritratti">ritratti</a>
-					<a href="/temi/natura">natura</a>
-					<a href="/temi/citta">città</a>
+					<a href={`${base}/temi/persone`}>persone</a>
+					<a href={`${base}/temi/ritratti`}>ritratti</a>
+					<a href={`${base}/temi/natura`}>natura</a>
+					<a href={`${base}/temi/citta`}>città</a>
 				</div>
 			</div>
 			<a href="#about">about</a>
-			<a href="/album">album</a>
+			<a href={`${base}/album`}>album</a>
 			<a href="https://instagram.com/frammemento" target="_blank" rel="noreferrer">@frammemento</a>
 		</nav>
 		<h1>Frammemento</h1>
 	</section>
 
-	<section class="content-grid">
+	<section id="about" class="content-grid">
 		<article class="manifesto">
 			<p>
 				La passione per la fotografia analogica non è nata in me come un progetto deliberato, né come il
