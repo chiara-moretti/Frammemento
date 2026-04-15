@@ -146,7 +146,7 @@
 	.global-footer {
 		position: fixed;
 		left: 50%;
-		bottom: max(0.8rem, env(safe-area-inset-bottom, 0px));
+		bottom: max(1.4rem, env(safe-area-inset-bottom, 0px));
 		transform: translateX(-50%);
 		z-index: 95;
 	}
@@ -185,11 +185,17 @@
 		}
 
 		main.temi-page {
+			padding-top: 0.9rem;
 			padding-bottom: 7rem;
 		}
 
+		main.album-page {
+			padding-top: 1.35rem;
+			padding-bottom: 0.9rem;
+		}
+
 		.global-footer.temi-footer {
-			bottom: max(1.5rem, env(safe-area-inset-bottom, 0px));
+			bottom: max(2rem, env(safe-area-inset-bottom, 0px));
 		}
 
 		.global-footer.temi-footer .global-home-link {
@@ -223,7 +229,7 @@
 	}
 
 	main {
-		padding-top: 4.6rem;
+		padding-top: 1.8rem;
 	}
 
 	.top-nav a {
@@ -289,6 +295,7 @@
 
 	@media (max-width: 740px) {
 		main {
+			padding-top: 4.6rem;
 			transition: padding-top 0.2s ease;
 		}
 
@@ -301,7 +308,7 @@
 		}
 
 		.global-footer.album-footer {
-			bottom: max(1.15rem, env(safe-area-inset-bottom, 0px));
+			bottom: max(1.75rem, env(safe-area-inset-bottom, 0px));
 		}
 
 		main.mobile-menu-open {

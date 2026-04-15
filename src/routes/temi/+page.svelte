@@ -140,6 +140,12 @@
 		}
 	}
 
+	@media (min-width: 741px) {
+		.temi-header {
+			padding-top: 0.8rem;
+		}
+	}
+
 	@media (min-width: 1200px) {
 		.grid {
 			column-count: 5;

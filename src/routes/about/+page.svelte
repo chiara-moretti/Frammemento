@@ -181,6 +181,11 @@
 </svelte:head>
 
 <div class="about-root">
+	<header class="about-header scroll-bar-anchor">
+		<p class="about-label">Portfolio Fotografico</p>
+		<h1 class="about-title">About</h1>
+	</header>
+
 	<div class="stage" bind:this={stageEl} role="img" aria-label="Frammento e memento: le lettere si ricompongono in FRAMMEMENTO">
 		<!-- Probe: stesso peso/spacing della fine animazione, per misurare i centri reali -->
 		<div class="final-probe" bind:this={probeEl} aria-hidden="true">
@@ -226,7 +231,42 @@
 				)}; --ty3: {s.ty3}; --st: {s.st}"
 			>{ch}</span>
 		{/each}
+
+		<a class="about-cta" href="#about-description" aria-label="Scopri di più, scorri verso il basso">
+			<span>scopri di più</span>
+			<span class="about-cta-arrow" aria-hidden="true">↓</span>
+		</a>
 	</div>
+
+	<section class="about-description" id="about-description" aria-label="Descrizione personale">
+		<div class="about-description-content">
+			<p>
+				Studio Design della Comunicazione al Politecnico di Milano. Il mio pane quotidiano sono layout, tipografia,
+				architettura dell'informazione e messaggi che devono arrivare al bersaglio senza margini di errore.
+				Progetto il controllo. Cerco la chiarezza in un mondo sovraccarico.
+			</p>
+			<p>Eppure, se siete finiti su questa pagina, e perche state guardando la mia via di fuga da tutto questo.</p>
+			<p>
+				Tutto e cominciato con un oggetto tutt'altro che magico: la macchina fotografica Fujifilm di mia nonna.
+				Niente reliquie o epifanie mistiche, solo un blocco freddo di metallo e meccanica, pesante tra le mani,
+				con un otturatore rumoroso e un contascatti inesorabile. Nessun display per rassicurarmi, nessuna
+				possibilita di cancellare. Solo 36 tentativi. Un limite fisico e reale.
+			</p>
+			<p>Li ho capito che l'analogico offriva qualcosa che il design digitale aveva eliminato: il rischio. E l'attesa.</p>
+			<p>
+				Questo portfolio e il mio spazio per il caos tollerato. Nel mio lavoro da designer devo sapere esattamente
+				cosa succedera a schermo; quando scatto, invece, accetto che la pellicola faccia il suo corso. Accetto la
+				grana, i graffi imprevedibili, le dominanti di colore inaspettate, i neri chiusi. Li dentro c'e una verita
+				molto piu tangibile di qualsiasi render ad alta risoluzione.
+			</p>
+			<p>
+				Non troverete in queste pagine grandi manifesti filosofici su come io "fermi il tempo" o "catturi l'anima"
+				delle cose. Sono solo Chiara. Di giorno metto in ordine il rumore visivo degli altri. Nel resto del tempo,
+				uso la chimica e la luce per registrare il mio.
+			</p>
+			<p>Guardate le immagini. Tutto quello che c'e da sapere su come vedo le cose, e gia li.</p>
+		</div>
+	</section>
 </div>
 
 <style>
@@ -241,7 +281,8 @@
 		color: #000;
 		font-family: 'Helvetica Neue', Arial, sans-serif;
 		overflow-x: hidden;
-		overflow-y: hidden;
+		overflow-y: auto;
+		scroll-behavior: smooth;
 	}
 
 	/* Annulla offset del layout mobile (padding-top su <main>) */
@@ -258,23 +299,140 @@
 
 	.about-root {
 		position: relative;
-		min-height: 100dvh;
+		min-height: auto;
 		width: 100%;
 		padding: 0;
 		display: grid;
-		place-items: center;
-		overflow: hidden;
+		grid-template-rows: auto 100dvh 100dvh;
+		place-items: stretch;
+		align-content: start;
+		overflow-x: hidden;
 		--about-center-offset-y: -5rem;
+		--final-letter-spacing: 0.055em;
+		--about-cta-offset-y: clamp(2.2rem, 6vw, 3.1rem);
+	}
+
+	.about-header {
+		position: relative;
+		border-bottom: 5px solid #000;
+		margin-inline: 1rem;
+		padding: 0.8rem 0 0.7rem;
+	}
+
+	.about-label {
+		margin: 0 0 0.35rem;
+		font-size: 0.86rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: #ff5f1f;
+	}
+
+	.about-title {
+		margin: 0;
+		font-size: clamp(2rem, 8vw, 5rem);
+		letter-spacing: -0.03em;
+		text-transform: uppercase;
+	}
+
+	@media (min-width: 741px) {
+		.about-root {
+			padding-top: 0.65rem;
+			grid-template-rows: auto calc(100dvh - 0.65rem) 100dvh;
+			--about-center-offset-y: -6rem;
+		}
+
+		.about-header {
+			margin-top: 0;
+			padding-top: 0;
+			padding-bottom: 0.3rem;
+		}
+
+		.about-label {
+			margin: 0;
+		}
 	}
 
 	.stage {
 		position: relative;
-		width: 100vw;
-		max-width: 100vw;
+		width: 100%;
+		max-width: 100%;
 		height: 100dvh;
 		min-height: 100dvh;
 		margin-inline: auto;
 		overflow: hidden;
+	}
+
+	.about-cta {
+		position: absolute;
+		left: 50%;
+		top: calc(50% + var(--about-center-offset-y) + var(--about-cta-offset-y));
+		transform: translateX(-50%);
+		z-index: 6;
+		display: inline-flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.45rem;
+		color: #000;
+		text-decoration: none;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		font-size: 0.68rem;
+		font-weight: 700;
+		opacity: 0;
+		pointer-events: none;
+		animation: cta-in 0.55s ease-out 8s forwards;
+	}
+
+	.about-cta-arrow {
+		font-size: 1.2rem;
+		line-height: 1;
+		color: #ff5f1f;
+		animation: cta-bounce 1s ease-in-out infinite;
+	}
+
+	@keyframes cta-in {
+		from {
+			opacity: 0;
+			transform: translateX(-50%) translateY(0.35rem);
+		}
+		to {
+			opacity: 1;
+			pointer-events: auto;
+			transform: translateX(-50%) translateY(0);
+		}
+	}
+
+	@keyframes cta-bounce {
+		0%,
+		100% {
+			transform: translateY(0);
+		}
+		50% {
+			transform: translateY(0.18rem);
+		}
+	}
+
+	.about-description {
+		min-height: 100dvh;
+		display: grid;
+		place-items: center;
+		padding: clamp(1.5rem, 4vw, 4rem);
+		background: #fff;
+	}
+
+	.about-description-content {
+		width: min(76ch, 100%);
+		font-size: clamp(0.95rem, 1.3vw, 1.08rem);
+		line-height: 1.65;
+	}
+
+	.about-description-content p {
+		margin: 0 0 1.1rem;
+	}
+
+	.about-description-content p:last-child {
+		margin-bottom: 0;
 	}
 
 	/* Allineamento come la riga finale: baseline + kerning del font */
@@ -299,7 +457,7 @@
 		font-weight: 800;
 		line-height: 1;
 		text-transform: uppercase;
-		letter-spacing: 0.055em;
+		letter-spacing: var(--final-letter-spacing);
 		font-kerning: normal;
 		font-feature-settings: 'kern' 1;
 	}
@@ -446,7 +604,7 @@
 			transform: translate(-50%, -50%) translate(var(--tx3), var(--ty3)) scale(1.12);
 			font-weight: 800;
 			text-transform: uppercase;
-			letter-spacing: 0.055em;
+			letter-spacing: var(--final-letter-spacing);
 			font-feature-settings: 'kern' 1;
 		}
 	}
@@ -485,7 +643,27 @@
 	@media (max-width: 740px) {
 		.about-root {
 			/* Rifinitura mobile: centro visivo della parola finale */
+			padding: 0;
+			min-height: auto;
+			grid-template-rows: auto 100dvh 100dvh;
 			--about-center-offset-y: -6rem;
+			--final-letter-spacing: 0.035em;
+			--about-cta-offset-y: clamp(2rem, 8vw, 2.8rem);
+		}
+
+		.about-header {
+			margin-inline: 1rem;
+			padding: 0.2rem 0 0.7rem;
+		}
+
+		.about-label {
+			margin-bottom: 0.35rem;
+			font-size: 0.86rem;
+		}
+
+		.about-title {
+			font-size: clamp(2rem, 8vw, 5rem);
+			letter-spacing: -0.03em;
 		}
 
 		.stage {
@@ -502,6 +680,12 @@
 		.final-probe {
 			font-size: clamp(0.95rem, 5.4vw, 1.45rem);
 		}
+
+		.about-description-content {
+			font-size: 0.95rem;
+			line-height: 1.6;
+		}
+
 	}
 
 	@media (prefers-reduced-motion: reduce) {
@@ -519,13 +703,24 @@
 		.token--final {
 			font-weight: 800;
 			text-transform: uppercase;
-			letter-spacing: 0.055em;
+			letter-spacing: var(--final-letter-spacing);
 			transform: translate(-50%, -50%) translate(var(--tx3), var(--ty3)) scale(1.12);
 		}
 
 		.token--rest {
 			transform: translate(-50%, -50%) translate(var(--tx3), var(--ty3)) scale(0.84);
 			opacity: 0.9;
+		}
+
+		.about-cta {
+			animation: none;
+			opacity: 1;
+			pointer-events: auto;
+			transform: translateX(-50%);
+		}
+
+		.about-cta-arrow {
+			animation: none;
 		}
 	}
 </style>

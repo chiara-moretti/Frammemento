@@ -80,6 +80,12 @@
 		letter-spacing: -0.03em;
 	}
 
+	@media (min-width: 741px) {
+		h1 {
+			text-align: center;
+		}
+	}
+
 	@media (max-width: 740px) {
 		:global(html.route-home body) {
 			overflow-y: auto;

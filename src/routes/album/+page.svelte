@@ -15,7 +15,7 @@
 
 		try {
 			const isMobileViewport = window.matchMedia('(max-width: 740px)').matches;
-			const renderScale = isMobileViewport ? 1 : 1.2;
+			const renderScale = isMobileViewport ? 0.9 : 1;
 			const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
 			/** @param {boolean} useWorker */
 			const renderPdf = async (useWorker) => {
@@ -110,37 +110,42 @@
 	}
 
 	.album-page {
-		height: 100dvh;
+		height: 100%;
+		min-height: 0;
 		padding: 1rem;
 		display: grid;
 		grid-template-rows: auto 1fr;
-		gap: 1rem;
+		gap: 1.82rem;
 	}
 
 	.album-header {
 		position: relative;
 		display: grid;
-		border-bottom: 4px solid #000;
-		padding: 0 0 0.6rem;
+		border-bottom: 5px solid #000;
+		padding: 0 0 0.7rem;
 	}
 
 	.label {
-		margin: 0 0 0.4rem;
-		font-size: 0.9rem;
+		margin: 0 0 0.35rem;
+		font-size: 0.86rem;
 		font-weight: 700;
 		text-transform: uppercase;
-		letter-spacing: 0.09em;
+		letter-spacing: 0.08em;
 		color: #ff5f1f;
 	}
 
 	h1 {
 		margin: 0;
-		font-size: clamp(1.7rem, 5vw, 3.2rem);
+		font-size: clamp(2rem, 8vw, 5rem);
 		text-transform: uppercase;
-		letter-spacing: -0.02em;
+		letter-spacing: -0.03em;
 	}
 
 	.frame-wrap {
+		min-height: 0;
+		height: 94%;
+		justify-self: stretch;
+		align-self: start;
 		border: 3px solid #000;
 		background: #fff7f2;
 		padding: 0.75rem;
@@ -152,7 +157,7 @@
 	.pdf-track {
 		height: 100%;
 		display: flex;
-		gap: 1rem;
+		gap: 0.8rem;
 		align-items: center;
 		width: max-content;
 		min-width: 100%;
@@ -174,7 +179,7 @@
 		height: 100%;
 		border: 2px solid #000;
 		background: #fff;
-		padding: 0.4rem;
+		padding: 0.3rem;
 		scroll-snap-align: start;
 	}
 
