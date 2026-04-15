@@ -264,7 +264,7 @@
 		display: grid;
 		place-items: center;
 		overflow: hidden;
-		--about-center-offset-y: -1.2rem;
+		--about-center-offset-y: -5rem;
 	}
 
 	.stage {
@@ -485,7 +485,7 @@
 	@media (max-width: 740px) {
 		.about-root {
 			/* Rifinitura mobile: centro visivo della parola finale */
-			--about-center-offset-y: -3rem;
+			--about-center-offset-y: -6rem;
 		}
 
 		.stage {
