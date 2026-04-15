@@ -14,7 +14,7 @@
 	const isAlbumPage = $derived(normalizePath(page.url.pathname) === normalizePath(`${base}/album`));
 	const showHeaderBar = $derived(isMobileMenuOpen || hasScrolledPastHomeTitle);
 	const mobileMainOffset = $derived(
-		!isMobileMenuOpen ? '0rem' : isHomePage ? (isMobileThemesOpen ? '19rem' : '14.5rem') : '17.5rem'
+		!isMobileMenuOpen ? '0rem' : isHomePage ? (isMobileThemesOpen ? '16.8rem' : '13rem') : '15.8rem'
 	);
 
 	const toggleMobileMenu = () => {
