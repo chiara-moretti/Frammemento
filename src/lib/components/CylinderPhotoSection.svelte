@@ -6,6 +6,7 @@
 	const FACE_COUNT = 8;
 
 	let sectionEl = $state(/** @type {HTMLElement | null} */ (null));
+	let viewportEl = $state(/** @type {HTMLDivElement | null} */ (null));
 	let prismEl = $state(/** @type {HTMLDivElement | null} */ (null));
 	let prismPhotos = $state(/** @type {string[]} */ ([]));
 	let rotationYDeg = $state(0);
@@ -17,6 +18,14 @@
 	let velocityY = 0;
 	let inertiaRafId = 0;
 	let lastMoveTs = 0;
+	let touchStartX = 0;
+	let touchStartY = 0;
+	let touchLastX = 0;
+	let touchLastY = 0;
+
+	function isMobileViewport() {
+		return window.matchMedia('(max-width: 740px)').matches;
+	}
 
 	/** @type {string[]} */
 	const allPhotoUrls = Object.entries(manifest).flatMap(([category, photos]) =>
@@ -123,6 +132,7 @@
 	 * @param {PointerEvent} event
 	 */
 	function startDrag(event) {
+		if (isMobileViewport()) return;
 		if (event.pointerType === 'mouse' && event.button !== 0) return;
 		stopInertia();
 		isDragging = true;
@@ -135,9 +145,23 @@
 	}
 
 	/**
+	 * @param {TouchEvent} event
+	 */
+	function startTouchDrag(event) {
+		if (!isMobileViewport()) return;
+		const touch = event.touches[0];
+		if (!touch) return;
+		touchStartX = touch.clientX;
+		touchStartY = touch.clientY;
+		touchLastX = touch.clientX;
+		touchLastY = touch.clientY;
+	}
+
+	/**
 	 * @param {PointerEvent} event
 	 */
 	function moveDrag(event) {
+		if (isMobileViewport()) return;
 		if (!isDragging) return;
 		const deltaX = event.clientX - dragStartX;
 		const dragFactor = event.pointerType === 'touch' ? 0.82 : 0.46;
@@ -150,6 +174,34 @@
 		lastMoveTs = now;
 	}
 
+	/**
+	 * @param {TouchEvent} event
+	 */
+	function moveTouchDrag(event) {
+		if (!isMobileViewport()) return;
+		const touch = event.touches[0];
+		if (!touch) return;
+		touchLastX = touch.clientX;
+		touchLastY = touch.clientY;
+		const dx = touchLastX - touchStartX;
+		const dy = touchLastY - touchStartY;
+		if (Math.abs(dx) > Math.abs(dy)) event.preventDefault();
+	}
+
+	/**
+	 * @param {TouchEvent} event
+	 */
+	function endTouchDrag(event) {
+		if (!isMobileViewport()) return;
+		const touch = event.changedTouches[0];
+		const endX = touch ? touch.clientX : touchLastX;
+		const deltaX = endX - touchStartX;
+		const SWIPE_THRESHOLD = 28;
+		if (Math.abs(deltaX) < SWIPE_THRESHOLD) return;
+		if (deltaX < 0) nextFace();
+		else prevFace();
+	}
+
 	function endDrag() {
 		if (!isDragging) return;
 		isDragging = false;
@@ -159,6 +211,13 @@
 	onMount(() => {
 		prismPhotos = fillToFaceCount(pickPhotos(allPhotoUrls));
 		updatePrismRadius();
+		const onTouchStart = /** @param {TouchEvent} event */ (event) => startTouchDrag(event);
+		const onTouchMove = /** @param {TouchEvent} event */ (event) => moveTouchDrag(event);
+		const onTouchEnd = /** @param {TouchEvent} event */ (event) => endTouchDrag(event);
+		viewportEl?.addEventListener('touchstart', onTouchStart, { passive: true });
+		viewportEl?.addEventListener('touchmove', onTouchMove, { passive: false });
+		viewportEl?.addEventListener('touchend', onTouchEnd, { passive: true });
+		viewportEl?.addEventListener('touchcancel', onTouchEnd, { passive: true });
 		/** @param {KeyboardEvent} event */
 		const onKey = (event) => {
 			if (!sectionEl || !sectionEl.matches(':hover')) return;
@@ -171,6 +230,10 @@
 
 		return () => {
 			stopInertia();
+			viewportEl?.removeEventListener('touchstart', onTouchStart);
+			viewportEl?.removeEventListener('touchmove', onTouchMove);
+			viewportEl?.removeEventListener('touchend', onTouchEnd);
+			viewportEl?.removeEventListener('touchcancel', onTouchEnd);
 			window.removeEventListener('keydown', onKey);
 			window.removeEventListener('resize', onResize);
 		};
@@ -182,7 +245,7 @@
 		<h2>Esplora</h2>
 	</div>
 	<div class="cylinder-frame">
-		<div class="cylinder-viewport">
+		<div class="cylinder-viewport" bind:this={viewportEl}>
 			<button class="nav nav-prev" type="button" onclick={prevFace} aria-label="Foto precedente">‹</button>
 			<div class="cylinder-wrap">
 				<div
@@ -290,6 +353,7 @@
 		padding-top: 0;
 		box-sizing: border-box;
 		position: relative;
+		touch-action: none;
 	}
 
 	.cylinder-wrap {
@@ -358,6 +422,7 @@
 		background: transparent;
 		backface-visibility: hidden;
 		transform-style: preserve-3d;
+		pointer-events: none;
 	}
 
 	.panel-image--front {
@@ -404,10 +469,12 @@
 
 	@media (max-width: 740px) {
 		.cylinder-section {
-			--header-width: min(94vw, 28rem);
+			--header-width: 100%;
 			min-height: auto;
 			height: auto;
-			padding: 2.6rem 0.4rem 0.2rem;
+			width: calc(100% + 2rem);
+			margin-inline: -1rem;
+			padding: 2.2rem 0 0;
 		}
 
 		.cylinder-header {
@@ -421,8 +488,12 @@
 			letter-spacing: 0.02em;
 		}
 
+		.cylinder-frame {
+			border: 0;
+		}
+
 		.cylinder-viewport {
-			height: min(60dvh, 24rem);
+			height: min(52dvh, 21rem);
 			gap: 0;
 			overflow: hidden;
 		}
