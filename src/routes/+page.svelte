@@ -21,7 +21,7 @@
 </script>
 
 <main class="page">
-	<section class="top-fold">
+	<section id="home-top" class="top-fold">
 		<section class="hero scroll-bar-anchor">
 			<p class="label">Portfolio Fotografico</p>
 			<h1>Frammemento</h1>
@@ -31,6 +31,21 @@
 	</section>
 
 	<CylinderPhotoSection />
+
+	<footer class="mobile-footer" aria-label="Link social">
+		<a
+			class="instagram-button"
+			href="https://instagram.com/frammemento"
+			target="_blank"
+			rel="noreferrer"
+		>
+			Apri Instagram
+		</a>
+	</footer>
+
+	<footer class="back-top-footer" aria-label="Navigazione pagina">
+		<a class="back-top-button" href="#home-top">Torna all'inizio</a>
+	</footer>
 </main>
 
 <style>
@@ -96,6 +111,36 @@
 		text-align: left;
 	}
 
+	.mobile-footer {
+		display: none;
+	}
+
+	.back-top-footer {
+		display: flex;
+		justify-content: center;
+		padding: 0 0 2rem;
+	}
+
+	.back-top-button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 2.5rem;
+		padding: 0.55rem 1.1rem;
+		border: 2px solid #000;
+		background: #fff;
+		color: #000;
+		font-size: 0.9rem;
+		font-weight: 700;
+		letter-spacing: 0.03em;
+		text-transform: uppercase;
+		text-decoration: none;
+	}
+
+	.back-top-button:active {
+		transform: scale(0.98);
+	}
+
 	@media (max-width: 740px) {
 		:global(html.route-home body) {
 			overflow-y: auto;
@@ -140,6 +185,36 @@
 			letter-spacing: -0.015em;
 			line-height: 1;
 			overflow-wrap: anywhere;
+		}
+
+		.mobile-footer {
+			display: flex;
+			justify-content: center;
+			padding: 0.2rem 0 1rem;
+		}
+
+		.instagram-button {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			min-height: 2.6rem;
+			padding: 0.55rem 1.15rem;
+			border: 2px solid #000;
+			background: #fff;
+			color: #000;
+			font-size: 0.9rem;
+			font-weight: 700;
+			letter-spacing: 0.02em;
+			text-transform: uppercase;
+			text-decoration: none;
+		}
+
+		.instagram-button:active {
+			transform: scale(0.98);
+		}
+
+		.back-top-footer {
+			padding: 0.1rem 0 1.2rem;
 		}
 
 	}

@@ -79,11 +79,20 @@
 	}
 
 	function nextFace() {
-		rotationYDeg -= 45;
+		rotationYDeg = snapRotation(rotationYDeg - 45);
 	}
 
 	function prevFace() {
-		rotationYDeg += 45;
+		rotationYDeg = snapRotation(rotationYDeg + 45);
+	}
+
+	/**
+	 * Allinea la rotazione al lato più vicino (8 facce => step da 45°).
+	 * @param {number} value
+	 */
+	function snapRotation(value) {
+		const step = 360 / FACE_COUNT;
+		return Math.round(value / step) * step;
 	}
 
 	function stopInertia() {
@@ -101,6 +110,7 @@
 			rotationYDeg += velocityY * 16;
 			velocityY *= friction;
 			if (Math.abs(velocityY) < minSpeed) {
+				rotationYDeg = snapRotation(rotationYDeg);
 				inertiaRafId = 0;
 				return;
 			}
@@ -168,76 +178,135 @@
 </script>
 
 <section class="cylinder-section" bind:this={sectionEl} aria-label="Galleria 3D delle foto">
-	<div class="cylinder-viewport">
-		<button class="nav nav-prev" type="button" onclick={prevFace} aria-label="Foto precedente">‹</button>
-		<div class="cylinder-wrap">
-			<div
-				class="cylinder"
-				class:dragging={isDragging}
-				role="application"
-				aria-label="Carosello 3D a otto lati trascinabile"
-				bind:this={prismEl}
-				onpointerdown={startDrag}
-				onpointermove={moveDrag}
-				onpointerup={endDrag}
-				onpointercancel={endDrag}
-				onlostpointercapture={endDrag}
-				style={`--rotation-y: ${rotationYDeg}deg; --rotation-x: ${rotationXDeg}deg; --count: ${FACE_COUNT}; --prism-radius: ${prismRadiusPx}px;`}
-			>
-				{#each prismPhotos as photoUrl, index (`${photoUrl}-${index}`)}
-					<figure class="panel" style={`--i: ${index};`}>
-						<img
-							class="panel-image"
-							src={photoUrl}
-							alt="Foto analogica in galleria 3D"
-							loading="lazy"
-						/>
-					</figure>
-				{/each}
+	<div class="cylinder-header" aria-hidden="true">
+		<h2>Esplora</h2>
+	</div>
+	<div class="cylinder-frame">
+		<div class="cylinder-viewport">
+			<button class="nav nav-prev" type="button" onclick={prevFace} aria-label="Foto precedente">‹</button>
+			<div class="cylinder-wrap">
+				<div
+					class="cylinder"
+					class:dragging={isDragging}
+					role="application"
+					aria-label="Carosello 3D a otto lati trascinabile"
+					bind:this={prismEl}
+					onpointerdown={startDrag}
+					onpointermove={moveDrag}
+					onpointerup={endDrag}
+					onpointercancel={endDrag}
+					onlostpointercapture={endDrag}
+					style={`--rotation-y: ${rotationYDeg}deg; --rotation-x: ${rotationXDeg}deg; --count: ${FACE_COUNT}; --prism-radius: ${prismRadiusPx}px;`}
+				>
+					{#each prismPhotos as photoUrl, index (`${photoUrl}-${index}`)}
+						<figure class="panel" style={`--i: ${index};`}>
+							<img
+								class="panel-image panel-image--front"
+								src={photoUrl}
+								alt="Foto analogica in galleria 3D"
+								loading="lazy"
+							/>
+							<img
+								class="panel-image panel-image--back"
+								src={photoUrl}
+								alt=""
+								aria-hidden="true"
+								loading="lazy"
+							/>
+						</figure>
+					{/each}
+				</div>
 			</div>
+			<button class="nav nav-next" type="button" onclick={nextFace} aria-label="Foto successiva">›</button>
 		</div>
-		<button class="nav nav-next" type="button" onclick={nextFace} aria-label="Foto successiva">›</button>
 	</div>
 </section>
 
 <style>
 	.cylinder-section {
-		min-height: 100dvh;
+		--frame-border: 2px;
+		--header-width: calc(100vw - 1.5rem);
+		--carousel-width: min(calc(var(--header-width) - 1.4rem), 72rem);
+		--carousel-height: 100%;
+		min-height: auto;
+		height: auto;
 		background: #fff;
 		position: relative;
-		display: grid;
-		place-items: center;
-		padding: 1rem;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: flex-start;
+		padding: 1.2rem 0 3.2rem;
 		overflow-x: clip;
 	}
 
-	.cylinder-viewport {
-		width: min(100%, 66rem);
-		height: min(84dvh, 40rem);
+	.cylinder-header {
+		width: var(--header-width);
+		border-bottom: 5px solid #000;
+		padding: 0.6rem 0 0.45rem;
+		margin-bottom: 0.35rem;
+		align-self: center;
 		display: flex;
-		align-items: center;
+		align-items: flex-end;
+		justify-content: flex-start;
+		flex: 0 0 auto;
+	}
+
+	h2 {
+		margin: 0;
+		padding: 0;
+		font-size: clamp(1.3rem, 2.7vw, 2.3rem);
+		font-weight: 800;
+		line-height: 0.95;
+		letter-spacing: 0.02em;
+		text-transform: uppercase;
+		color: #ff5f1f;
+	}
+
+	.cylinder-frame {
+		width: var(--header-width);
+		flex: 0 0 auto;
+		height: min(70dvh, 36rem);
+		min-height: 0;
+		border: var(--frame-border) solid #000;
+		box-sizing: border-box;
+		display: flex;
+		align-items: stretch;
+		position: relative;
+		overflow: hidden;
+	}
+
+	.cylinder-viewport {
+		width: 100%;
+		height: 100%;
+		display: flex;
+		align-items: stretch;
 		justify-content: center;
-		gap: 0.8rem;
+		gap: 0;
 		overflow: visible;
 		perspective: 1800px;
 		perspective-origin: 50% 42%;
+		padding-top: 0;
+		box-sizing: border-box;
+		position: relative;
 	}
 
 	.cylinder-wrap {
-		width: min(92vw, 40rem);
-		height: min(74dvh, 34rem);
+		width: var(--carousel-width);
+		height: 100%;
 		display: grid;
 		place-items: center;
+		padding-top: 0;
 		transform-style: preserve-3d;
 		flex: 1;
 	}
 
 	.cylinder {
 		position: relative;
-		width: min(68vw, 22rem);
-		height: min(60dvh, 30rem);
+		width: min(48vw, 18rem);
+		height: min(46dvh, 22rem);
 		transform-style: preserve-3d;
-		transform: rotateX(var(--rotation-x)) rotateY(var(--rotation-y));
+		transform: translateY(-1.8rem) rotateX(var(--rotation-x)) rotateY(var(--rotation-y));
 		transition: transform 360ms cubic-bezier(0.22, 0.7, 0.14, 1);
 		cursor: grab;
 		/* Serve a garantire il drag touch continuo del prisma su mobile. */
@@ -263,8 +332,7 @@
 		transform:
 			rotateY(calc((360deg / var(--count)) * var(--i)))
 			translateZ(var(--prism-radius));
-		backface-visibility: hidden;
-		-webkit-backface-visibility: hidden;
+		backface-visibility: visible;
 		display: grid;
 		place-items: center;
 	}
@@ -288,16 +356,24 @@
 		filter: grayscale(0.1) contrast(1.03);
 		background: transparent;
 		backface-visibility: hidden;
-		-webkit-backface-visibility: hidden;
 		transform-style: preserve-3d;
+	}
+
+	.panel-image--front {
 		transform: translateZ(0.1px);
 	}
 
+	.panel-image--back {
+		transform: rotateY(180deg) translateZ(0.1px);
+	}
+
 	.nav {
-		flex: 0 0 auto;
-		width: 2.35rem;
-		height: 2.35rem;
-		border: 2px solid #000;
+		position: absolute;
+		top: var(--frame-border);
+		bottom: var(--frame-border);
+		height: auto;
+		width: 2rem;
+		border: none;
 		background: #fff;
 		color: #000;
 		font-size: 1.55rem;
@@ -307,6 +383,18 @@
 		justify-content: center;
 		cursor: pointer;
 		transition: transform 120ms ease;
+		z-index: 2;
+		box-sizing: border-box;
+	}
+
+	.nav-prev {
+		left: 0;
+		border-right: var(--frame-border) solid #000;
+	}
+
+	.nav-next {
+		right: 0;
+		border-left: var(--frame-border) solid #000;
 	}
 
 	.nav:active {
@@ -315,8 +403,21 @@
 
 	@media (max-width: 740px) {
 		.cylinder-section {
-			min-height: 100dvh;
-			padding: 0.8rem 0.4rem 1rem;
+			--header-width: min(94vw, 28rem);
+			min-height: auto;
+			height: auto;
+			padding: 2.6rem 0 0.2rem;
+		}
+
+		.cylinder-header {
+			width: min(94vw, 28rem);
+			margin-bottom: 0.7rem;
+		}
+
+		h2 {
+			padding: 0 0.6rem;
+			font-size: 0.92rem;
+			letter-spacing: 0.02em;
 		}
 
 		.cylinder-viewport {
