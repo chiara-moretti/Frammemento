@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { base } from '$app/paths';
 	import AboutManifestoSection from '$lib/components/AboutManifestoSection.svelte';
+	import CylinderPhotoSection from '$lib/components/CylinderPhotoSection.svelte';
 
 	const albumPdf = `${base}/album.pdf`;
 
@@ -20,12 +21,16 @@
 </script>
 
 <main class="page">
-	<section class="hero scroll-bar-anchor">
-		<p class="label">Portfolio Fotografico</p>
-		<h1>Frammemento</h1>
+	<section class="top-fold">
+		<section class="hero scroll-bar-anchor">
+			<p class="label">Portfolio Fotografico</p>
+			<h1>Frammemento</h1>
+		</section>
+
+		<AboutManifestoSection {albumPdf} />
 	</section>
 
-	<AboutManifestoSection {albumPdf} />
+	<CylinderPhotoSection />
 </main>
 
 <style>
@@ -45,18 +50,25 @@
 		background: #fff;
 		color: #000;
 		font-family: 'Helvetica Neue', Arial, sans-serif;
-		overflow: hidden;
-		overflow-x: hidden;
+		overflow-y: auto;
+		overflow-x: clip;
 	}
 
 	.page {
-		height: 100dvh;
+		min-height: 100dvh;
 		width: 100%;
 		max-width: 100%;
+		display: flex;
+		flex-direction: column;
+		box-sizing: border-box;
+		overflow-x: clip;
+	}
+
+	.top-fold {
+		height: 100dvh;
 		display: grid;
 		grid-template-rows: auto 1fr;
 		padding-bottom: 0.9rem;
-		box-sizing: border-box;
 		overflow: hidden;
 	}
 
@@ -87,20 +99,27 @@
 	@media (max-width: 740px) {
 		:global(html.route-home body) {
 			overflow-y: auto;
-			overflow-x: hidden;
+			overflow-x: clip;
 		}
 
 		.page {
-			height: auto;
 			min-height: 100dvh;
 			width: 100%;
 			max-width: 100%;
 			display: grid;
+			padding: 1rem;
+			gap: 1rem;
+		}
+
+		.top-fold {
+			height: auto;
+			min-height: 100dvh;
+			display: grid;
 			grid-template-rows: auto 1fr;
 			gap: 1rem;
-			padding: 1rem;
+			padding: 0;
 			overflow-y: auto;
-			overflow-x: hidden;
+			overflow-x: clip;
 			-webkit-overflow-scrolling: touch;
 		}
 
