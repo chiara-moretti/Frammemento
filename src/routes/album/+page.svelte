@@ -211,6 +211,7 @@
 		.album-page {
 			height: auto;
 			min-height: calc(100dvh - 4.6rem);
+			gap: 1.15rem;
 		}
 
 		.album-header {
@@ -218,8 +219,8 @@
 		}
 
 		.frame-wrap {
-			height: 59dvh;
-			min-height: 59dvh;
+			height: 66dvh;
+			min-height: 66dvh;
 			padding: 0.55rem;
 			overflow-x: auto;
 			overflow-y: hidden;
