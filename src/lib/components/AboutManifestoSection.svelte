@@ -1,6 +1,113 @@
 <script>
+	import { onMount } from 'svelte';
+	import { base } from '$app/paths';
+	import manifest from '$lib/media-manifest.json';
+
 	/** @type {{ albumPdf: string }} */
 	let { albumPdf } = $props();
+
+	let mobilePhotoUrl = $state(/** @type {string | null} */ (null));
+	let mobilePhotoPan = $state(/** @type {HTMLDivElement | null} */ (null));
+	let mobilePhotoStyle = $state('');
+	let panX = $state(0);
+	let panY = $state(0);
+	let maxPanX = $state(0);
+	let maxPanY = $state(0);
+	let isDragging = $state(false);
+	let dragStartX = 0;
+	let dragStartY = 0;
+	let dragOriginX = 0;
+	let dragOriginY = 0;
+
+	/** @type {string[]} */
+	const allPhotoUrls = Object.entries(manifest).flatMap(([category, photos]) =>
+		photos.map(
+			(fileName) => `${base}/assets/${encodeURIComponent(category)}/${encodeURIComponent(fileName)}`
+		)
+	);
+
+	onMount(() => {
+		if (allPhotoUrls.length === 0) return;
+		const randomIndex = Math.floor(Math.random() * allPhotoUrls.length);
+		mobilePhotoUrl = allPhotoUrls[randomIndex];
+	});
+
+	/**
+	 * Mantiene il rapporto originale, scala in cover e aggiunge zoom/pan senza stretch.
+	 * @param {Event} event
+	 */
+	function centerMobilePhoto(event) {
+		if (!mobilePhotoPan) return;
+		const img = /** @type {HTMLImageElement} */ (event.currentTarget);
+		if (!img.naturalWidth || !img.naturalHeight) return;
+
+		const viewportW = mobilePhotoPan.clientWidth;
+		const viewportH = mobilePhotoPan.clientHeight;
+		if (!viewportW || !viewportH) return;
+
+		const coverScale = Math.max(viewportW / img.naturalWidth, viewportH / img.naturalHeight);
+		const zoom = 1.22;
+		const finalScale = coverScale * zoom;
+		const finalW = Math.round(img.naturalWidth * finalScale);
+		const finalH = Math.round(img.naturalHeight * finalScale);
+		maxPanX = Math.max(0, (finalW - viewportW) / 2);
+		maxPanY = Math.max(0, (finalH - viewportH) / 2);
+		panX = 0;
+		panY = 0;
+		mobilePhotoStyle =
+			`width:${finalW}px;height:${finalH}px;` +
+			`left:50%;top:50%;transform:translate(-50%,-50%) translate(${panX}px,${panY}px);`;
+	}
+
+	function handleMobilePhotoError() {
+		mobilePhotoStyle = '';
+		panX = 0;
+		panY = 0;
+		maxPanX = 0;
+		maxPanY = 0;
+	}
+
+	/**
+	 * @param {number} value
+	 * @param {number} min
+	 * @param {number} max
+	 */
+	function clamp(value, min, max) {
+		return Math.min(max, Math.max(min, value));
+	}
+
+	/**
+	 * @param {PointerEvent} event
+	 */
+	function startDrag(event) {
+		if (event.pointerType === 'mouse' && event.button !== 0) return;
+		isDragging = true;
+		dragStartX = event.clientX;
+		dragStartY = event.clientY;
+		dragOriginX = panX;
+		dragOriginY = panY;
+		const target = /** @type {HTMLDivElement | null} */ (event.currentTarget);
+		target?.setPointerCapture(event.pointerId);
+	}
+
+	/**
+	 * @param {PointerEvent} event
+	 */
+	function moveDrag(event) {
+		if (!isDragging) return;
+		const deltaX = event.clientX - dragStartX;
+		const deltaY = event.clientY - dragStartY;
+		panX = clamp(dragOriginX + deltaX, -maxPanX, maxPanX);
+		panY = clamp(dragOriginY + deltaY, -maxPanY, maxPanY);
+		mobilePhotoStyle = mobilePhotoStyle.replace(
+			/transform:[^;]+;/,
+			`transform:translate(-50%,-50%) translate(${panX}px,${panY}px);`
+		);
+	}
+
+	function endDrag() {
+		isDragging = false;
+	}
 </script>
 
 <section id="about" class="content-grid">
@@ -43,10 +150,30 @@
 	</article>
 
 	<div class="album">
+		{#if mobilePhotoUrl}
+			<div
+				class="mobile-photo-pan"
+				class:dragging={isDragging}
+				bind:this={mobilePhotoPan}
+				role="application"
+				aria-label="Trascina per muoverti nella foto"
+				onpointerdown={startDrag}
+				onpointermove={moveDrag}
+				onpointerup={endDrag}
+				onpointercancel={endDrag}
+				onlostpointercapture={endDrag}
+			>
+				<img
+					class="mobile-random-photo"
+					src={mobilePhotoUrl}
+					alt="Foto analogica casuale della collezione"
+					style={mobilePhotoStyle}
+					onload={centerMobilePhoto}
+					onerror={handleMobilePhotoError}
+				/>
+			</div>
+		{/if}
 		<iframe title="Portfolio analogico" src={`${albumPdf}#zoom=page-width`} loading="lazy"></iframe>
-		<a class="mobile-pdf-link" href={albumPdf} target="_blank" rel="noopener noreferrer">
-			Apri PDF completo
-		</a>
 	</div>
 </section>
 
@@ -67,6 +194,7 @@
 		border: 3px solid #000;
 		padding: 1rem;
 		min-height: 0;
+		min-width: 0;
 	}
 
 	.manifesto {
@@ -101,7 +229,11 @@
 		min-height: 0;
 	}
 
-	.mobile-pdf-link {
+	.mobile-random-photo {
+		display: none;
+	}
+
+	.mobile-photo-pan {
 		display: none;
 	}
 
@@ -123,7 +255,9 @@
 			padding: 0;
 			height: auto;
 			min-height: auto;
-			overflow: visible;
+			overflow-x: clip;
+			overflow-y: visible;
+			max-width: 100%;
 		}
 
 		.manifesto,
@@ -136,7 +270,9 @@
 			border: 3px solid #ff5f1f;
 			height: min(66dvh, 36rem);
 			min-height: 0;
-			padding: 0.6rem;
+			max-width: 100%;
+			padding: 0;
+			overflow: hidden;
 		}
 
 		.manifesto {
@@ -144,25 +280,42 @@
 			order: 2;
 		}
 
-		iframe {
-			border: 2px solid #000;
-			min-height: 0;
+		.mobile-random-photo {
+			display: block;
+			position: absolute;
+			width: auto;
+			height: auto;
+			max-width: none;
+			max-height: none;
+			user-select: none;
+			-webkit-user-drag: none;
+			pointer-events: none;
 		}
 
-		.mobile-pdf-link {
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-			margin-top: 0.55rem;
-			padding: 0.55rem 0.75rem;
-			border: 2px solid #000;
-			background: #fff;
-			color: #000;
-			text-decoration: none;
-			font-size: 0.82rem;
-			font-weight: 700;
-			text-transform: uppercase;
-			letter-spacing: 0.05em;
+		.mobile-photo-pan {
+			display: flex;
+			width: 100%;
+			height: 100%;
+			max-width: 100%;
+			min-width: 0;
+			min-height: 0;
+			position: relative;
+			overflow: hidden;
+			touch-action: none;
+			cursor: grab;
+			contain: layout paint size;
+		}
+
+		.mobile-photo-pan.dragging {
+			cursor: grabbing;
+		}
+
+		iframe {
+			display: none;
+		}
+
+		.album:has(.mobile-random-photo) {
+			border: 3px solid #000;
 		}
 	}
 </style>

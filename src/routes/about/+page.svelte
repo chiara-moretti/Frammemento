@@ -4,6 +4,9 @@
 	const framLetters = [...'frammento'];
 	const memLetters = [...'memento'];
 	const finalWord = 'FRAMMEMENTO';
+	const TOKEN_ANIMATION_DURATION_MS = 7400;
+	const MAX_TOKEN_DELAY_S = (memLetters.length - 1 + 9) * 0.035;
+	const HOVER_READY_DELAY_MS = Math.ceil(TOKEN_ANIMATION_DURATION_MS + MAX_TOKEN_DELAY_S * 1000 + 180);
 
 	/** Fallback se la misura non è ancora pronta */
 	/** @param {number} slot */
@@ -94,6 +97,7 @@
 	let framOffsetsPx = $state(/** @type {number[]} */ ([]));
 	/** Centri X di "memento" rispetto al centro stage (px) */
 	let memOffsetsPx = $state(/** @type {number[]} */ ([]));
+	let canEtymologyHover = $state(false);
 
 	async function measureFinalWord() {
 		if (!stageEl || !probeEl || !framProbeEl || !memProbeEl) return;
@@ -172,7 +176,13 @@
 
 	onMount(() => {
 		document.documentElement.classList.add('route-about');
-		return () => document.documentElement.classList.remove('route-about');
+		const hoverReadyTimer = window.setTimeout(() => {
+			canEtymologyHover = true;
+		}, HOVER_READY_DELAY_MS);
+		return () => {
+			window.clearTimeout(hoverReadyTimer);
+			document.documentElement.classList.remove('route-about');
+		};
 	});
 </script>
 
@@ -186,7 +196,13 @@
 		<h1 class="about-title">About</h1>
 	</header>
 
-	<div class="stage" bind:this={stageEl} role="img" aria-label="Frammento e memento: le lettere si ricompongono in FRAMMEMENTO">
+	<div
+		class="stage"
+		class:stage--hover-ready={canEtymologyHover}
+		bind:this={stageEl}
+		role="img"
+		aria-label="Frammento e memento: le lettere si ricompongono in FRAMMEMENTO"
+	>
 		<!-- Probe: stesso peso/spacing della fine animazione, per misurare i centri reali -->
 		<div class="final-probe" bind:this={probeEl} aria-hidden="true">
 			{#each [...finalWord] as c}
@@ -232,7 +248,12 @@
 			>{ch}</span>
 		{/each}
 
-		<a class="about-cta" href="#about-description" aria-label="Scopri di più, scorri verso il basso">
+		<a
+			class="about-cta"
+			style={`--cta-delay-ms: ${HOVER_READY_DELAY_MS}ms`}
+			href="#about-description"
+			aria-label="Scopri di più, scorri verso il basso"
+		>
 			<span>scopri di più</span>
 			<span class="about-cta-arrow" aria-hidden="true">↓</span>
 		</a>
@@ -309,7 +330,8 @@
 		overflow-x: hidden;
 		--about-center-offset-y: -5rem;
 		--final-letter-spacing: 0.055em;
-		--about-cta-offset-y: clamp(2.2rem, 6vw, 3.1rem);
+		--about-cta-offset-y: clamp(3.2rem, 7.5vw, 4.4rem);
+		--about-cta-hover-extra-offset-y: clamp(1.9rem, 5vw, 3rem);
 	}
 
 	.about-header {
@@ -381,7 +403,8 @@
 		font-weight: 700;
 		opacity: 0;
 		pointer-events: none;
-		animation: cta-in 0.55s ease-out 8s forwards;
+		animation: cta-in 0.55s ease-out var(--cta-delay-ms, 8s) forwards;
+		transition: top 0.35s ease;
 	}
 
 	.about-cta-arrow {
@@ -419,6 +442,7 @@
 		place-items: center;
 		padding: clamp(1.5rem, 4vw, 4rem);
 		background: #fff;
+		scroll-margin-top: 2.4rem;
 	}
 
 	.about-description-content {
@@ -560,6 +584,12 @@
 		/* Durante animation-delay applica il keyframe 0%: niente lettere impilate al centro */
 		animation-fill-mode: both;
 		animation-delay: calc(var(--st) * 1s);
+		transition:
+			transform 0.45s ease,
+			opacity 0.35s ease,
+			font-weight 0.35s ease,
+			letter-spacing 0.35s ease,
+			text-transform 0.35s ease;
 	}
 
 	.token--final {
@@ -640,6 +670,69 @@
 		}
 	}
 
+	.stage--hover-ready:hover .token {
+		z-index: 3;
+		animation: none;
+	}
+
+	.stage--hover-ready .token--final {
+		animation: none;
+		transform: translate(-50%, -50%) translate(var(--tx3), var(--ty3)) scale(1.12);
+		font-weight: 800;
+		text-transform: uppercase;
+		letter-spacing: var(--final-letter-spacing);
+		opacity: 1;
+	}
+
+	.stage--hover-ready .token--rest {
+		animation: none;
+		transform: translate(-50%, -50%) translate(var(--tx3), var(--ty3)) scale(0.84);
+		letter-spacing: 0.02em;
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	.stage--hover-ready .ety {
+		animation: none;
+		opacity: 0;
+		visibility: hidden;
+		filter: blur(2px);
+		transition:
+			opacity 0.14s ease,
+			filter 0.14s ease,
+			visibility 0s linear 0.14s;
+	}
+
+	.stage--hover-ready:has(.token:hover) .token--fram,
+	.stage--hover-ready:has(.token:hover) .token--mem {
+		transform: translate(-50%, -50%) translate(var(--tx0), var(--ty0)) scale(1);
+		font-weight: 700;
+		text-transform: lowercase;
+		letter-spacing: 0.02em;
+		opacity: 1;
+	}
+
+	.stage--hover-ready:has(.token:hover) .token--rest {
+		pointer-events: auto;
+	}
+
+	.stage--hover-ready:has(.token:hover) .ety {
+		animation: none;
+		opacity: 1;
+		visibility: visible;
+		filter: blur(0);
+		transition:
+			opacity 0.12s ease,
+			filter 0.12s ease,
+			visibility 0s linear 0s;
+	}
+
+	.stage--hover-ready:has(.token:hover) .about-cta {
+		top: calc(
+			50% + var(--about-center-offset-y) + var(--about-cta-offset-y) + var(--about-cta-hover-extra-offset-y)
+		);
+	}
+
 	@media (max-width: 740px) {
 		.about-root {
 			/* Rifinitura mobile: centro visivo della parola finale */
@@ -648,7 +741,8 @@
 			grid-template-rows: auto 100dvh 100dvh;
 			--about-center-offset-y: -6rem;
 			--final-letter-spacing: 0.035em;
-			--about-cta-offset-y: clamp(2rem, 8vw, 2.8rem);
+			--about-cta-offset-y: clamp(3rem, 11vw, 4.6rem);
+			--about-cta-hover-extra-offset-y: clamp(2.6rem, 8vw, 4rem);
 		}
 
 		.about-header {
@@ -684,6 +778,10 @@
 		.about-description-content {
 			font-size: 0.95rem;
 			line-height: 1.6;
+		}
+
+		.about-description {
+			scroll-margin-top: 5.2rem;
 		}
 
 	}

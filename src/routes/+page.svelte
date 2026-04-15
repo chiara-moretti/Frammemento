@@ -46,10 +46,13 @@
 		color: #000;
 		font-family: 'Helvetica Neue', Arial, sans-serif;
 		overflow: hidden;
+		overflow-x: hidden;
 	}
 
 	.page {
 		height: 100dvh;
+		width: 100%;
+		max-width: 100%;
 		display: grid;
 		grid-template-rows: auto 1fr;
 		padding-bottom: 0.9rem;
@@ -78,27 +81,26 @@
 		line-height: 0.95;
 		text-transform: uppercase;
 		letter-spacing: -0.03em;
-	}
-
-	@media (min-width: 741px) {
-		h1 {
-			text-align: center;
-		}
+		text-align: left;
 	}
 
 	@media (max-width: 740px) {
 		:global(html.route-home body) {
 			overflow-y: auto;
+			overflow-x: hidden;
 		}
 
 		.page {
 			height: auto;
 			min-height: 100dvh;
+			width: 100%;
+			max-width: 100%;
 			display: grid;
 			grid-template-rows: auto 1fr;
 			gap: 1rem;
 			padding: 1rem;
 			overflow-y: auto;
+			overflow-x: hidden;
 			-webkit-overflow-scrolling: touch;
 		}
 
