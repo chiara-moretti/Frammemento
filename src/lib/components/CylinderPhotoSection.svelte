@@ -306,14 +306,22 @@
 
 	.cylinder-header {
 		width: var(--header-width);
-		border-bottom: 5px solid #000;
-		padding: 0.6rem 0 0.45rem;
+		padding: 0.35rem 0.6rem 0;
 		margin-bottom: 0.35rem;
 		align-self: center;
 		display: flex;
-		align-items: flex-end;
+		flex-direction: column;
+		align-items: flex-start;
 		justify-content: flex-start;
 		flex: 0 0 auto;
+	}
+
+	.cylinder-header::after {
+		content: '';
+		width: 100%;
+		height: 5px;
+		background: #000;
+		margin-top: 0.35rem;
 	}
 
 	h2 {
@@ -474,26 +482,29 @@
 			height: auto;
 			width: calc(100% + 2rem);
 			margin-inline: -1rem;
-			padding: 2.2rem 0 0;
+			padding: 2rem 0 0;
 		}
 
 		.cylinder-header {
 			width: min(94vw, 28rem);
+			padding: 0.2rem 0.6rem 0;
 			margin-bottom: 0.7rem;
 		}
 
 		h2 {
-			padding: 0 0.6rem;
+			padding: 0;
 			font-size: 0.92rem;
 			letter-spacing: 0.02em;
 		}
 
 		.cylinder-frame {
 			border: 0;
+			height: auto;
+			min-height: 0;
 		}
 
 		.cylinder-viewport {
-			height: min(52dvh, 21rem);
+			height: min(46dvh, 18.5rem);
 			gap: 0;
 			overflow: hidden;
 		}
