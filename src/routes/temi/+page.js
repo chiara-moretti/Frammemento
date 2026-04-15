@@ -16,28 +16,30 @@ function randomItem(items) {
 /**
  * @template T
  * @param {T[]} items
- * @param {number} maxItems
  * @returns {T[]}
  */
-function pickRandomSubset(items, maxItems) {
-	const shuffled = [...items].sort(() => Math.random() - 0.5);
-	return shuffled.slice(0, Math.min(maxItems, shuffled.length));
+function shuffle(items) {
+	const shuffled = [...items];
+	for (let i = shuffled.length - 1; i > 0; i -= 1) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+	}
+	return shuffled;
 }
 
 export function load() {
-	const photos = [];
+	const photosByCategory = [];
 
 	for (const [category, images] of Object.entries(manifest)) {
 		const slug = SLUG_BY_CATEGORY[category];
-		const pickedImages = pickRandomSubset(images, 8);
-		for (const imageName of pickedImages) {
-			const detailIndex = images.indexOf(imageName);
+		const categoryPhotos = [];
+		for (const [detailIndex, imageName] of images.entries()) {
 			const detailSlug = slug ?? '';
 			const detailHref =
 				slug !== undefined && detailIndex >= 0
 					? `${base}/temi/foto/${slug}/${detailIndex}`
 					: null;
-			photos.push({
+			categoryPhotos.push({
 				key: `${category}-${imageName}`,
 				category,
 				imageUrl: `${base}/assets/${encodeURIComponent(category)}/${encodeURIComponent(imageName)}`,
@@ -47,8 +49,9 @@ export function load() {
 				detailIndex
 			});
 		}
+		photosByCategory.push({ category, photos: shuffle(categoryPhotos) });
 	}
 
-	photos.sort((a, b) => a.category.localeCompare(b.category, 'it'));
-	return { photos };
+	photosByCategory.sort((a, b) => a.category.localeCompare(b.category, 'it'));
+	return { photos: photosByCategory.flatMap((entry) => entry.photos) };
 }
