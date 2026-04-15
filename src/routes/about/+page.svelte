@@ -13,14 +13,13 @@
 
 	/** @param {number} i */
 	function framTokenStyle(i) {
-		/* «frammento»: centro parola ~i=4, colonne a sinistra dello stage */
-		const x0 = -17 + (i - 4) * 2.35;
-		const tx0 = `${x0}vw`;
-		const ty0 = '-1vh';
-		const tx1 = `${x0 + (i - 4) * 1.35}vw`;
-		const ty1 = `${((i % 3) - 1) * 0.9}vh`;
-		const tx2 = `${x0 + 5}vw`;
-		const ty2 = '-0.5vh';
+		/* «frammento» in alto, centrato */
+		const tx0 = tx0ForFram(i);
+		const ty0 = '-11vh';
+		const tx1 = `calc(${tx0} + ${(i - 4) * 0.5}ch)`;
+		const ty1 = `${-11 + ((i % 3) - 1) * 0.9}vh`;
+		const tx2 = `calc(${tx0} + ${(i - 4) * 0.18}ch)`;
+		const ty2 = '-8.8vh';
 		if (i <= 3) {
 			return {
 				tx0,
@@ -30,7 +29,7 @@
 				tx2,
 				ty2,
 				tx3: slotTxCh(i),
-				ty3: '-1.5vh',
+				ty3: '0vh',
 				st: i * 0.035,
 				role: 'final',
 				finalSlot: i
@@ -57,14 +56,13 @@
 
 	/** @param {number} j */
 	function memTokenStyle(j) {
-		/* «memento»: centro parola ~j=3 (lettera e centrale), blocco a destra simmetrico a «frammento» */
-		const x0 = 17 + (j - 3) * 2.35;
-		const tx0 = `${x0}vw`;
-		const ty0 = '-1vh';
-		const tx1 = `${x0 + (j - 3) * 1.25}vw`;
-		const ty1 = `${((j % 3) - 1) * 0.9}vh`;
-		const tx2 = `${x0 - 4.5}vw`;
-		const ty2 = '-0.5vh';
+		/* «memento» sotto, centrato */
+		const tx0 = tx0ForMem(j);
+		const ty0 = '3vh';
+		const tx1 = `calc(${tx0} + ${(j - 3) * 0.4}ch)`;
+		const ty1 = `${3 + ((j % 3) - 1) * 0.9}vh`;
+		const tx2 = `calc(${tx0} + ${(j - 3) * 0.12}ch)`;
+		const ty2 = '0.8vh';
 		const slot = j + 4;
 		return {
 			tx0,
@@ -74,7 +72,7 @@
 			tx2,
 			ty2,
 			tx3: slotTxCh(slot),
-			ty3: '-1.5vh',
+			ty3: '0vh',
 			st: (j + 9) * 0.035,
 			role: 'final',
 			finalSlot: slot
@@ -85,12 +83,20 @@
 	let stageEl = $state();
 	/** @type {HTMLElement | undefined} */
 	let probeEl = $state();
+	/** @type {HTMLElement | undefined} */
+	let framProbeEl = $state();
+	/** @type {HTMLElement | undefined} */
+	let memProbeEl = $state();
 
 	/** Centri X delle 11 lettere rispetto al centro dello stage (px) */
 	let finalOffsetsPx = $state(/** @type {number[]} */ ([]));
+	/** Centri X di "frammento" rispetto al centro stage (px) */
+	let framOffsetsPx = $state(/** @type {number[]} */ ([]));
+	/** Centri X di "memento" rispetto al centro stage (px) */
+	let memOffsetsPx = $state(/** @type {number[]} */ ([]));
 
 	async function measureFinalWord() {
-		if (!stageEl || !probeEl) return;
+		if (!stageEl || !probeEl || !framProbeEl || !memProbeEl) return;
 		if (typeof document !== 'undefined' && document.fonts?.ready) {
 			try {
 				await document.fonts.ready;
@@ -106,10 +112,26 @@
 			const r = el.getBoundingClientRect();
 			return r.left + r.width / 2 - mid;
 		});
+
+		const framSpans = framProbeEl.querySelectorAll('.probe-char');
+		if (framSpans.length === framLetters.length) {
+			framOffsetsPx = [...framSpans].map((el) => {
+				const r = el.getBoundingClientRect();
+				return r.left + r.width / 2 - mid;
+			});
+		}
+
+		const memSpans = memProbeEl.querySelectorAll('.probe-char');
+		if (memSpans.length === memLetters.length) {
+			memOffsetsPx = [...memSpans].map((el) => {
+				const r = el.getBoundingClientRect();
+				return r.left + r.width / 2 - mid;
+			});
+		}
 	}
 
 	$effect(() => {
-		if (!stageEl || !probeEl) return;
+		if (!stageEl || !probeEl || !framProbeEl || !memProbeEl) return;
 		void measureFinalWord();
 		const ro = new ResizeObserver(() => {
 			void measureFinalWord();
@@ -136,6 +158,18 @@
 		return slotTxCh(slot);
 	}
 
+	/** @param {number} i */
+	function tx0ForFram(i) {
+		if (framOffsetsPx.length === framLetters.length) return `${framOffsetsPx[i]}px`;
+		return `${(i - 4) * 1.32}ch`;
+	}
+
+	/** @param {number} j */
+	function tx0ForMem(j) {
+		if (memOffsetsPx.length === memLetters.length) return `${memOffsetsPx[j]}px`;
+		return `${(j - 3) * 1.32}ch`;
+	}
+
 	onMount(() => {
 		document.documentElement.classList.add('route-about');
 		return () => document.documentElement.classList.remove('route-about');
@@ -151,6 +185,16 @@
 		<!-- Probe: stesso peso/spacing della fine animazione, per misurare i centri reali -->
 		<div class="final-probe" bind:this={probeEl} aria-hidden="true">
 			{#each [...finalWord] as c}
+				<span class="probe-char">{c}</span>
+			{/each}
+		</div>
+		<div class="word-probe word-probe--fram" bind:this={framProbeEl} aria-hidden="true">
+			{#each framLetters as c}
+				<span class="probe-char">{c}</span>
+			{/each}
+		</div>
+		<div class="word-probe word-probe--mem" bind:this={memProbeEl} aria-hidden="true">
+			{#each memLetters as c}
 				<span class="probe-char">{c}</span>
 			{/each}
 		</div>
@@ -200,6 +244,12 @@
 		overflow-y: hidden;
 	}
 
+	/* Annulla offset del layout mobile (padding-top su <main>) */
+	:global(html.route-about body > main) {
+		padding-top: 0 !important;
+		min-height: 100dvh;
+	}
+
 	:global(html.route-about *),
 	:global(html.route-about *::before),
 	:global(html.route-about *::after) {
@@ -210,17 +260,19 @@
 		position: relative;
 		min-height: 100dvh;
 		width: 100%;
-		padding: clamp(1rem, 3vw, 2rem);
+		padding: 0;
 		display: grid;
 		place-items: center;
+		overflow: hidden;
+		--about-center-offset-y: -1.2rem;
 	}
 
 	.stage {
 		position: relative;
-		width: 100%;
-		max-width: min(100%, 92rem);
-		height: min(78dvh, 36rem);
-		min-height: 20rem;
+		width: 100vw;
+		max-width: 100vw;
+		height: 100dvh;
+		min-height: 100dvh;
 		margin-inline: auto;
 		overflow: hidden;
 	}
@@ -229,7 +281,7 @@
 	.final-probe {
 		position: absolute;
 		left: 50%;
-		top: 50%;
+		top: calc(50% + var(--about-center-offset-y));
 		z-index: 0;
 		transform: translate(-50%, -50%) scale(1.12);
 		display: flex;
@@ -257,6 +309,32 @@
 		flex-shrink: 0;
 	}
 
+	.word-probe {
+		position: absolute;
+		left: 50%;
+		top: calc(50% + var(--about-center-offset-y));
+		z-index: 0;
+		transform: translate(-50%, -50%);
+		display: flex;
+		flex-direction: row;
+		flex-wrap: nowrap;
+		align-items: baseline;
+		justify-content: center;
+		gap: 0;
+		opacity: 0;
+		visibility: hidden;
+		pointer-events: none;
+		white-space: nowrap;
+		color: transparent;
+		font-size: clamp(1.1rem, 4.1vw, 2.25rem);
+		font-weight: 700;
+		line-height: 1;
+		text-transform: lowercase;
+		letter-spacing: 0.02em;
+		font-kerning: normal;
+		font-feature-settings: 'kern' 1;
+	}
+
 	.token--fram,
 	.token--mem {
 		font-kerning: normal;
@@ -267,7 +345,7 @@
 	.ety {
 		position: absolute;
 		left: 50%;
-		top: 62%;
+		top: calc(62% + var(--about-center-offset-y));
 		width: min(38vw, 14.5rem);
 		margin: 0;
 		padding: 0 0.35rem;
@@ -281,11 +359,13 @@
 	}
 
 	.ety--fram {
-		transform: translate(calc(-50% - 17vw), 0);
+		top: calc(42% + var(--about-center-offset-y));
+		transform: translate(-50%, 0);
 	}
 
 	.ety--mem {
-		transform: translate(calc(-50% + 17vw), 0);
+		top: calc(56% + var(--about-center-offset-y));
+		transform: translate(-50%, 0);
 	}
 
 	@keyframes ety-out {
@@ -305,10 +385,10 @@
 	.token {
 		position: absolute;
 		left: 50%;
-		top: 50%;
+		top: calc(50% + var(--about-center-offset-y));
 		z-index: 1;
 		transform: translate(-50%, -50%);
-		font-size: clamp(1rem, 3.2vw, 1.85rem);
+		font-size: clamp(1.1rem, 4.1vw, 2.25rem);
 		font-weight: 700;
 		line-height: 1;
 		text-transform: lowercase;
@@ -403,27 +483,24 @@
 	}
 
 	@media (max-width: 740px) {
+		.about-root {
+			/* Rifinitura mobile: centro visivo della parola finale */
+			--about-center-offset-y: -3rem;
+		}
+
 		.stage {
-			height: min(76dvh, 32rem);
-			min-height: 18rem;
+			height: 100dvh;
+			min-height: 100dvh;
 		}
 
 		.ety {
-			width: min(44vw, 12rem);
-			font-size: clamp(0.55rem, 2.8vw, 0.68rem);
-		}
-
-		.ety--fram {
-			transform: translate(calc(-50% - 28vw), 0);
-		}
-
-		.ety--mem {
-			transform: translate(calc(-50% + 28vw), 0);
+			width: min(72vw, 20rem);
+			font-size: clamp(0.62rem, 2.9vw, 0.74rem);
 		}
 
 		.token,
 		.final-probe {
-			font-size: clamp(0.78rem, 2.6vw, 1.05rem);
+			font-size: clamp(0.95rem, 5.4vw, 1.45rem);
 		}
 	}
 

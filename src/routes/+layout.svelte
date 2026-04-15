@@ -5,10 +5,13 @@
 	let { children } = $props();
 	let isMobileMenuOpen = $state(false);
 	let isMobileThemesOpen = $state(false);
+	let hasScrolledPastHomeTitle = $state(false);
 	const homePath = `${base}/`;
 	/** @param {string} value */
 	const normalizePath = (value) => value.replace(/\/+$/, '') || '/';
 	const isHomePage = $derived(normalizePath(page.url.pathname) === normalizePath(homePath));
+	const isTemiPage = $derived(normalizePath(page.url.pathname).startsWith(normalizePath(`${base}/temi`)));
+	const showHeaderBar = $derived(!isHomePage || isMobileMenuOpen || hasScrolledPastHomeTitle);
 	const mobileMainOffset = $derived(
 		!isMobileMenuOpen ? '0rem' : isHomePage ? (isMobileThemesOpen ? '19rem' : '14.5rem') : '17.5rem'
 	);
@@ -24,9 +27,56 @@
 		isMobileMenuOpen = false;
 		isMobileThemesOpen = false;
 	};
+
+	$effect(() => {
+		if (typeof window === 'undefined') return;
+
+		/** @type {HTMLElement | null} */
+		let homeHero = null;
+		/** @type {HTMLElement | null} */
+		let homeScrollContainer = null;
+
+		const syncHeaderState = () => {
+			if (!isHomePage) {
+				hasScrolledPastHomeTitle = true;
+				return;
+			}
+			homeHero = document.querySelector('.hero');
+			if (!homeHero) {
+				hasScrolledPastHomeTitle = false;
+				return;
+			}
+			const headerHeight = 76;
+			hasScrolledPastHomeTitle = homeHero.getBoundingClientRect().bottom <= headerHeight;
+		};
+
+		const detachScrollListener = () => {
+			if (!homeScrollContainer) return;
+			homeScrollContainer.removeEventListener('scroll', syncHeaderState);
+			homeScrollContainer = null;
+		};
+
+		const attachScrollListener = () => {
+			detachScrollListener();
+			if (!isHomePage) return;
+			homeScrollContainer = document.querySelector('.page');
+			homeScrollContainer?.addEventListener('scroll', syncHeaderState, { passive: true });
+		};
+
+		attachScrollListener();
+		syncHeaderState();
+		window.addEventListener('scroll', syncHeaderState, { passive: true });
+		window.addEventListener('resize', syncHeaderState);
+
+		return () => {
+			detachScrollListener();
+			window.removeEventListener('scroll', syncHeaderState);
+			window.removeEventListener('resize', syncHeaderState);
+		};
+	});
 </script>
 
-<header class="site-header">
+<header class="site-header" class:with-bar={showHeaderBar}>
 	<button
 		class="hamburger-btn"
 		type="button"
@@ -73,17 +123,80 @@
 <main
 	class:mobile-menu-open={isMobileMenuOpen}
 	class:mobile-submenu-open={isMobileMenuOpen && isMobileThemesOpen}
+	class:temi-page={isTemiPage}
 	style={`--mobile-main-offset: ${mobileMainOffset};`}
 >
 	{@render children()}
 </main>
 
+{#if !isHomePage}
+	<footer class="global-footer" class:temi-footer={isTemiPage}>
+		<a class="global-home-link" href={homePath} onclick={closeMobileMenu}>torna alla home</a>
+	</footer>
+{/if}
+
 <style>
 	.site-header {
 		position: fixed;
-		top: 0.8rem;
-		right: 1.25rem;
-		z-index: 100;
+		top: 0;
+		left: 0;
+		right: 0;
+		padding: 0.75rem 1rem;
+		background: transparent;
+		border-bottom: 0;
+		transition: background-color 0.2s ease, border-color 0.2s ease;
+		z-index: 200;
+	}
+
+	.site-header.with-bar {
+		background: #fff;
+		border-bottom: 6px solid #000;
+	}
+
+	.global-footer {
+		position: fixed;
+		left: 50%;
+		bottom: max(0.8rem, env(safe-area-inset-bottom, 0px));
+		transform: translateX(-50%);
+		z-index: 95;
+	}
+
+	.global-home-link {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+		padding: 0.45rem 0.75rem;
+		border: 3px solid #000;
+		background: #fff;
+		color: #000;
+		text-decoration: none;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		font-size: 0.72rem;
+		font-weight: 700;
+		box-shadow: 0 4px 0 #000;
+	}
+
+	.global-home-link:hover,
+	.global-home-link:focus-visible {
+		color: #ff5f1f;
+		border-color: #ff5f1f;
+	}
+
+	@media (min-width: 741px) {
+		main.temi-page {
+			padding-bottom: 7rem;
+		}
+
+		.global-footer.temi-footer {
+			bottom: max(1.5rem, env(safe-area-inset-bottom, 0px));
+		}
+
+		.global-footer.temi-footer .global-home-link {
+			padding-top: 0.62rem;
+			padding-bottom: 0.62rem;
+		}
 	}
 
 	.hamburger-btn {
@@ -101,6 +214,8 @@
 
 	.top-nav {
 		display: flex;
+		justify-content: flex-end;
+		align-items: center;
 		gap: 0.9rem;
 		font-size: 0.86rem;
 		text-transform: uppercase;
@@ -108,11 +223,18 @@
 		font-weight: 700;
 	}
 
+	main {
+		padding-top: 4.6rem;
+	}
+
 	.top-nav a {
 		color: #000;
 		text-decoration: none;
 		border-bottom: 2px solid transparent;
 		padding-bottom: 0.1rem;
+		line-height: 1;
+		display: inline-flex;
+		align-items: center;
 	}
 
 	.top-nav a:hover,
@@ -125,6 +247,8 @@
 
 	.nav-dropdown {
 		position: relative;
+		display: inline-flex;
+		align-items: center;
 	}
 
 	.submenu {
@@ -147,11 +271,6 @@
 	}
 
 	@media (min-width: 741px) {
-		.nav-dropdown {
-			padding-bottom: 0.7rem;
-			margin-bottom: -0.7rem;
-		}
-
 		.submenu {
 			display: flex;
 			opacity: 0;
@@ -171,8 +290,11 @@
 
 	@media (max-width: 740px) {
 		main {
-			padding-top: 4.6rem;
 			transition: padding-top 0.2s ease;
+		}
+
+		main.temi-page {
+			padding-bottom: 5.8rem;
 		}
 
 		main.mobile-menu-open {
@@ -188,8 +310,7 @@
 			left: 0;
 			right: 0;
 			padding: 0.75rem 1rem;
-			background: #fff;
-			border-bottom: 3px solid #000;
+			background: transparent;
 		}
 
 		.hamburger-btn {
