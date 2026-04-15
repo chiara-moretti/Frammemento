@@ -213,8 +213,8 @@
 		}
 
 		.frame-wrap {
-			height: 62dvh;
-			min-height: 62dvh;
+			height: 59dvh;
+			min-height: 59dvh;
 			padding: 0.55rem;
 			overflow-x: auto;
 			overflow-y: hidden;

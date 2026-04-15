@@ -11,7 +11,8 @@
 	const normalizePath = (value) => value.replace(/\/+$/, '') || '/';
 	const isHomePage = $derived(normalizePath(page.url.pathname) === normalizePath(homePath));
 	const isTemiPage = $derived(normalizePath(page.url.pathname).startsWith(normalizePath(`${base}/temi`)));
-	const showHeaderBar = $derived(!isHomePage || isMobileMenuOpen || hasScrolledPastHomeTitle);
+	const isAlbumPage = $derived(normalizePath(page.url.pathname) === normalizePath(`${base}/album`));
+	const showHeaderBar = $derived(isMobileMenuOpen || hasScrolledPastHomeTitle);
 	const mobileMainOffset = $derived(
 		!isMobileMenuOpen ? '0rem' : isHomePage ? (isMobileThemesOpen ? '19rem' : '14.5rem') : '17.5rem'
 	);
@@ -31,49 +32,37 @@
 	$effect(() => {
 		if (typeof window === 'undefined') return;
 
-		/** @type {HTMLElement | null} */
-		let homeHero = null;
-		/** @type {HTMLElement | null} */
-		let homeScrollContainer = null;
-
+		let rafId = 0;
 		const syncHeaderState = () => {
-			if (!isHomePage) {
-				hasScrolledPastHomeTitle = true;
-				return;
-			}
-			homeHero = document.querySelector('.hero');
-			if (!homeHero) {
+			const anchorBar = document.querySelector('.scroll-bar-anchor');
+			const headerEl = document.querySelector('.site-header');
+			if (!(anchorBar instanceof HTMLElement)) {
 				hasScrolledPastHomeTitle = false;
 				return;
 			}
-			const headerHeight = 76;
-			hasScrolledPastHomeTitle = homeHero.getBoundingClientRect().bottom <= headerHeight;
+			const headerBottom = headerEl instanceof HTMLElement ? headerEl.getBoundingClientRect().bottom : 76;
+			const isPastTitle = anchorBar.getBoundingClientRect().bottom <= headerBottom;
+			hasScrolledPastHomeTitle = isPastTitle;
 		};
 
-		const detachScrollListener = () => {
-			if (!homeScrollContainer) return;
-			homeScrollContainer.removeEventListener('scroll', syncHeaderState);
-			homeScrollContainer = null;
+		const scheduleSync = () => {
+			cancelAnimationFrame(rafId);
+			rafId = requestAnimationFrame(syncHeaderState);
 		};
 
-		const attachScrollListener = () => {
-			detachScrollListener();
-			if (!isHomePage) return;
-			homeScrollContainer = document.querySelector('.page');
-			homeScrollContainer?.addEventListener('scroll', syncHeaderState, { passive: true });
-		};
-
-		attachScrollListener();
-		syncHeaderState();
-		window.addEventListener('scroll', syncHeaderState, { passive: true });
-		window.addEventListener('resize', syncHeaderState);
+		document.addEventListener('scroll', scheduleSync, { passive: true, capture: true });
+		window.addEventListener('resize', scheduleSync);
+		window.addEventListener('orientationchange', scheduleSync);
+		scheduleSync();
 
 		return () => {
-			detachScrollListener();
-			window.removeEventListener('scroll', syncHeaderState);
-			window.removeEventListener('resize', syncHeaderState);
+			cancelAnimationFrame(rafId);
+			document.removeEventListener('scroll', scheduleSync, { capture: true });
+			window.removeEventListener('resize', scheduleSync);
+			window.removeEventListener('orientationchange', scheduleSync);
 		};
 	});
+
 </script>
 
 <header class="site-header" class:with-bar={showHeaderBar}>
@@ -124,13 +113,14 @@
 	class:mobile-menu-open={isMobileMenuOpen}
 	class:mobile-submenu-open={isMobileMenuOpen && isMobileThemesOpen}
 	class:temi-page={isTemiPage}
+	class:album-page={isAlbumPage}
 	style={`--mobile-main-offset: ${mobileMainOffset};`}
 >
 	{@render children()}
 </main>
 
 {#if !isHomePage}
-	<footer class="global-footer" class:temi-footer={isTemiPage}>
+	<footer class="global-footer" class:temi-footer={isTemiPage} class:album-footer={isAlbumPage}>
 		<a class="global-home-link" href={homePath} onclick={closeMobileMenu}>torna alla home</a>
 	</footer>
 {/if}
@@ -142,7 +132,7 @@
 		left: 0;
 		right: 0;
 		padding: 0.75rem 1rem;
-		background: transparent;
+		background: #fff;
 		border-bottom: 0;
 		transition: background-color 0.2s ease, border-color 0.2s ease;
 		z-index: 200;
@@ -185,6 +175,15 @@
 	}
 
 	@media (min-width: 741px) {
+		main {
+			padding-top: 1.8rem;
+		}
+
+		:global(html.route-home) main {
+			padding-top: 0.25rem;
+			padding-bottom: 0.9rem;
+		}
+
 		main.temi-page {
 			padding-bottom: 7rem;
 		}
@@ -297,6 +296,14 @@
 			padding-bottom: 5.8rem;
 		}
 
+		main.album-page {
+			padding-bottom: 6.8rem;
+		}
+
+		.global-footer.album-footer {
+			bottom: max(1.15rem, env(safe-area-inset-bottom, 0px));
+		}
+
 		main.mobile-menu-open {
 			padding-top: var(--mobile-main-offset);
 		}
@@ -310,7 +317,7 @@
 			left: 0;
 			right: 0;
 			padding: 0.75rem 1rem;
-			background: transparent;
+			background: #fff;
 		}
 
 		.hamburger-btn {

@@ -3,7 +3,7 @@
 </script>
 
 <main class="temi-page">
-	<header class="temi-header">
+	<header class="temi-header scroll-bar-anchor">
 		<p class="label">Portfolio Fotografico</p>
 		<h1>Temi</h1>
 	</header>

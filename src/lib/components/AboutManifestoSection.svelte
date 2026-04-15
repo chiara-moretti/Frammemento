@@ -70,7 +70,7 @@
 	}
 
 	.manifesto {
-		overflow: auto;
+		overflow: hidden;
 	}
 
 	.manifesto p {

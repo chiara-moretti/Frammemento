@@ -7,14 +7,20 @@
 	const albumPdf = `${base}/album.pdf`;
 
 	onMount(() => {
+		const root = document.documentElement;
+		root.classList.add('route-home');
+
 		if (window.location.hash === '#about') {
 			goto(`${base}/about`, { replaceState: true });
 		}
+		return () => {
+			root.classList.remove('route-home');
+		};
 	});
 </script>
 
 <main class="page">
-	<section class="hero">
+	<section class="hero scroll-bar-anchor">
 		<p class="label">Portfolio Fotografico</p>
 		<h1>Frammemento</h1>
 	</section>
@@ -23,8 +29,8 @@
 </main>
 
 <style>
-	:global(html),
-	:global(body) {
+	:global(html.route-home),
+	:global(html.route-home body) {
 		height: 100%;
 	}
 
@@ -34,7 +40,7 @@
 		box-sizing: border-box;
 	}
 
-	:global(body) {
+	:global(html.route-home body) {
 		margin: 0;
 		background: #fff;
 		color: #000;
@@ -46,17 +52,19 @@
 		height: 100dvh;
 		display: grid;
 		grid-template-rows: auto 1fr;
+		padding-bottom: 0.9rem;
+		box-sizing: border-box;
 		overflow: hidden;
 	}
 
 	.hero {
 		position: relative;
-		padding: 2.5rem 1.25rem 1rem;
+		padding: 1.6rem 1.25rem 1rem;
 		border-bottom: 6px solid #000;
 	}
 
 	.label {
-		margin: 0 0 0.4rem;
+		margin: 0.45rem 0 0.4rem;
 		font-size: 0.9rem;
 		font-weight: 700;
 		text-transform: uppercase;
@@ -73,7 +81,7 @@
 	}
 
 	@media (max-width: 740px) {
-		:global(body) {
+		:global(html.route-home body) {
 			overflow-y: auto;
 		}
 
@@ -93,7 +101,7 @@
 			top: 0;
 			z-index: 20;
 			margin-top: 0;
-			padding: 1rem;
+			padding: 0.7rem 1rem 1rem;
 			border: 3px solid #000;
 			min-height: auto;
 			background: #fff;
