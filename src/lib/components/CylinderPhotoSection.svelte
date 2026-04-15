@@ -225,7 +225,7 @@
 <style>
 	.cylinder-section {
 		--frame-border: 2px;
-		--header-width: calc(100vw - 1.5rem);
+		--header-width: 100%;
 		--carousel-width: min(calc(var(--header-width) - 1.4rem), 72rem);
 		--carousel-height: 100%;
 		min-height: auto;
@@ -236,8 +236,9 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: flex-start;
-		padding: 1.2rem 0 3.2rem;
+		padding: 1.2rem 1.25rem 3.2rem;
 		overflow-x: clip;
+		box-sizing: border-box;
 	}
 
 	.cylinder-header {
@@ -406,7 +407,7 @@
 			--header-width: min(94vw, 28rem);
 			min-height: auto;
 			height: auto;
-			padding: 2.6rem 0 0.2rem;
+			padding: 2.6rem 0.4rem 0.2rem;
 		}
 
 		.cylinder-header {
