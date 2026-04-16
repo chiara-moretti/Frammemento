@@ -311,7 +311,7 @@
 
 	.cylinder-header {
 		width: var(--header-width);
-		padding: 0.35rem 0.6rem 0;
+		padding: 0.35rem 0 0;
 		margin-bottom: 0.35rem;
 		align-self: center;
 		display: flex;
@@ -319,6 +319,7 @@
 		align-items: flex-start;
 		justify-content: flex-start;
 		flex: 0 0 auto;
+		box-sizing: border-box;
 	}
 
 	.cylinder-header::after {
@@ -355,12 +356,14 @@
 
 	.cylinder-caption {
 		width: var(--header-width);
-		margin: -1.2rem 0 0;
-		transform: none;
-		padding: 0 0.6rem;
+		margin: 1rem 0 0;
+		padding: 0.9rem 1rem;
+		border: 2px solid #000;
+		background: #fff;
 		font-size: 0.95rem;
 		line-height: 1.45;
 		letter-spacing: 0.01em;
+		text-align: center;
 	}
 
 	.cylinder-viewport {
@@ -458,8 +461,8 @@
 
 	.nav {
 		position: absolute;
-		top: var(--frame-border);
-		bottom: var(--frame-border);
+		top: 0;
+		bottom: 0;
 		height: auto;
 		width: 2rem;
 		border: none;
@@ -547,6 +550,8 @@
 			margin-top: -1.45rem;
 			transform: none;
 			padding: 0 0.6rem;
+			border: 0;
+			background: transparent;
 			font-size: 0.84rem;
 			line-height: 1.4;
 		}

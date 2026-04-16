@@ -9,8 +9,11 @@
 	const homePath = `${base}/`;
 	/** @param {string} value */
 	const normalizePath = (value) => value.replace(/\/+$/, '') || '/';
-	const isHomePage = $derived(normalizePath(page.url.pathname) === normalizePath(homePath));
-	const isTemiPage = $derived(normalizePath(page.url.pathname).startsWith(normalizePath(`${base}/temi`)));
+	const temiRootPath = normalizePath(`${base}/temi`);
+	const normalizedPathname = $derived(normalizePath(page.url.pathname));
+	const isHomePage = $derived(normalizedPathname === normalizePath(homePath));
+	const isTemiPage = $derived(normalizedPathname.startsWith(temiRootPath));
+	const isTemiDetailPage = $derived(isTemiPage && normalizedPathname !== temiRootPath);
 	const isAlbumPage = $derived(normalizePath(page.url.pathname) === normalizePath(`${base}/album`));
 	const showHeaderBar = $derived(isMobileMenuOpen || hasScrolledPastHomeTitle);
 	const mobileMainOffset = $derived(
@@ -113,6 +116,7 @@
 	class:mobile-menu-open={isMobileMenuOpen}
 	class:mobile-submenu-open={isMobileMenuOpen && isMobileThemesOpen}
 	class:temi-page={isTemiPage}
+	class:temi-detail-page={isTemiDetailPage}
 	class:album-page={isAlbumPage}
 	style={`--mobile-main-offset: ${mobileMainOffset};`}
 >
@@ -187,6 +191,12 @@
 		main.temi-page {
 			padding-top: 0.9rem;
 			padding-bottom: 7rem;
+		}
+
+		main.temi-detail-page {
+			height: calc(100dvh - 0.9rem - 4.5rem);
+			padding-bottom: 0.4rem;
+			overflow: hidden;
 		}
 
 		main.album-page {
@@ -301,6 +311,12 @@
 
 		main.temi-page {
 			padding-bottom: 5.8rem;
+		}
+
+		main.temi-detail-page {
+			height: calc(100dvh - 4.6rem - 1.8rem);
+			padding-bottom: 0;
+			overflow: hidden;
 		}
 
 		main.album-page {

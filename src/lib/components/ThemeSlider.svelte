@@ -67,7 +67,7 @@
 <style>
 	:root {
 		--slider-border-size: 3px;
-		--slider-left-margin: 1rem;
+		--slider-left-margin: 0;
 	}
 
 	:global(body) {
@@ -78,8 +78,8 @@
 	}
 
 	.theme-slider {
-		height: 100dvh;
-		min-height: 100dvh;
+		height: 100%;
+		min-height: 0;
 		padding: 0.8rem 1rem 1.5rem;
 		box-sizing: border-box;
 		display: grid;
@@ -117,9 +117,9 @@
 		align-items: stretch;
 		gap: 0.75rem;
 		margin-top: 0.8rem;
-		margin-left: var(--slider-left-margin);
-		width: calc(100% - var(--slider-left-margin));
-		max-width: calc(100% - var(--slider-left-margin));
+		margin-left: 0;
+		width: 100%;
+		max-width: 100%;
 		box-sizing: border-box;
 	}
 
@@ -193,9 +193,9 @@
 		align-items: baseline;
 		justify-content: center;
 		gap: 0.45rem;
-		margin: 0.8rem 0 0.35rem var(--slider-left-margin);
-		width: calc(100% - var(--slider-left-margin));
-		max-width: calc(100% - var(--slider-left-margin));
+		margin: 0.8rem 0 0.35rem 0;
+		width: 100%;
+		max-width: 100%;
 		box-sizing: border-box;
 		padding: 0.45rem 0.75rem;
 		border: var(--slider-border-size) solid #000;
@@ -242,9 +242,9 @@
 	}
 
 	.empty {
-		margin: 0.8rem 0 0.35rem var(--slider-left-margin);
-		width: calc(100% - var(--slider-left-margin));
-		max-width: calc(100% - var(--slider-left-margin));
+		margin: 0.8rem 0 0.35rem 0;
+		width: 100%;
+		max-width: 100%;
 		box-sizing: border-box;
 		padding: 0.45rem 0.75rem;
 		border: var(--slider-border-size) solid #000;
@@ -259,8 +259,6 @@
 	@media (max-width: 740px) {
 		.theme-slider {
 			--slider-left-margin: 0;
-			height: calc(100dvh - 4.6rem);
-			min-height: calc(100dvh - 4.6rem);
 			padding: 0.45rem 1rem 1.1rem;
 			grid-template-rows: auto minmax(0, 1fr) auto;
 			gap: 0.28rem;
@@ -272,9 +270,9 @@
 			grid-template-rows: 1fr;
 			gap: 0.38rem;
 			margin-top: 0.28rem;
-			margin-left: var(--slider-left-margin);
-			width: calc(100% - var(--slider-left-margin));
-			max-width: calc(100% - var(--slider-left-margin));
+			margin-left: 0;
+			width: 100%;
+			max-width: 100%;
 		}
 
 		.frame {
@@ -305,9 +303,9 @@
 		}
 
 		.counter-bar {
-			margin: 0.28rem 0 0.35rem var(--slider-left-margin);
-			width: calc(100% - var(--slider-left-margin));
-			max-width: calc(100% - var(--slider-left-margin));
+			margin: 0.28rem 0 0.35rem 0;
+			width: 100%;
+			max-width: 100%;
 			padding: 0.38rem 0.55rem;
 			font-size: 0.7rem;
 			box-shadow: 0 3px 0 #000;
@@ -315,9 +313,9 @@
 		}
 
 		.empty {
-			margin: 0.28rem 0 0.35rem var(--slider-left-margin);
-			width: calc(100% - var(--slider-left-margin));
-			max-width: calc(100% - var(--slider-left-margin));
+			margin: 0.28rem 0 0.35rem 0;
+			width: 100%;
+			max-width: 100%;
 			font-size: 0.58rem;
 		}
 	}
