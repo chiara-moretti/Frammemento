@@ -256,6 +256,16 @@
 		flex-shrink: 0;
 	}
 
+	@media (min-width: 741px) {
+		.theme-slider {
+			padding-top: 1.15rem;
+		}
+
+		header {
+			padding-top: 0.1rem;
+		}
+	}
+
 	@media (max-width: 740px) {
 		.theme-slider {
 			--slider-left-margin: 0;

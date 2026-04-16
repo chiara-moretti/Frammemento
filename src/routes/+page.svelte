@@ -4,6 +4,7 @@
 	import { base } from '$app/paths';
 	import AboutManifestoSection from '$lib/components/AboutManifestoSection.svelte';
 	import CylinderPhotoSection from '$lib/components/CylinderPhotoSection.svelte';
+	import HomeHero3DSection from '$lib/components/HomeHero3DSection.svelte';
 
 	const albumPdf = `${base}/album.pdf`;
 
@@ -31,6 +32,10 @@
 	</section>
 
 	<CylinderPhotoSection />
+
+	<section class="first-screen">
+		<HomeHero3DSection />
+	</section>
 
 	<footer class="mobile-footer" aria-label="Link social">
 		<a
@@ -79,8 +84,15 @@
 		overflow-x: clip;
 	}
 
-	.top-fold {
+	.first-screen {
 		height: 100dvh;
+		min-height: 100dvh;
+		display: flex;
+		align-items: stretch;
+	}
+
+	.top-fold {
+		min-height: 100dvh;
 		display: grid;
 		grid-template-rows: auto 1fr;
 		padding-bottom: 0.9rem;
@@ -156,6 +168,11 @@
 			gap: 1rem;
 		}
 
+		.first-screen {
+			height: 100dvh;
+			min-height: 100dvh;
+		}
+
 		.top-fold {
 			height: auto;
 			min-height: 100dvh;
@@ -169,9 +186,7 @@
 		}
 
 		.hero {
-			position: sticky;
-			top: 0;
-			z-index: 20;
+			position: relative;
 			margin-top: 0;
 			padding: 0.7rem 1rem 1rem;
 			border: 3px solid #000;

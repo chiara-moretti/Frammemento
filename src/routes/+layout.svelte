@@ -194,8 +194,9 @@
 		}
 
 		main.temi-detail-page {
-			height: calc(100dvh - 0.9rem - 4.5rem);
-			padding-bottom: 0.4rem;
+			padding-top: 1.9rem;
+			height: calc(100dvh - 1.9rem - 2.4rem);
+			padding-bottom: 0.2rem;
 			overflow: hidden;
 		}
 
@@ -314,7 +315,7 @@
 		}
 
 		main.temi-detail-page {
-			height: calc(100dvh - 4.6rem - 1.8rem);
+			height: calc(100dvh - 4.6rem - 3.4rem);
 			padding-bottom: 0;
 			overflow: hidden;
 		}
