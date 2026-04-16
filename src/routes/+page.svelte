@@ -190,7 +190,7 @@
 		.mobile-footer {
 			display: flex;
 			justify-content: center;
-			padding: 0.2rem 0 1rem;
+			padding: 0.1rem 0 0.35rem;
 		}
 
 		.instagram-button {
@@ -214,7 +214,7 @@
 		}
 
 		.back-top-footer {
-			padding: 0.1rem 0 1.2rem;
+			padding: 0 0 1rem;
 		}
 
 	}

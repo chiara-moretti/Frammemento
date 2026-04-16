@@ -283,6 +283,11 @@
 			<button class="nav nav-next" type="button" onclick={nextFace} aria-label="Foto successiva">›</button>
 		</div>
 	</div>
+	<p class="cylinder-caption">
+		Rompere la piattezza dello schermo. Invece della classica griglia bidimensionale, una struttura da
+		esplorare. Fate ruotare il prisma per navigare tra le immagini, scardinando l'abitudine dello
+		scrolling verticale per un'interazione più fisica e meno prevedibile.
+	</p>
 </section>
 
 <style>
@@ -346,6 +351,16 @@
 		align-items: stretch;
 		position: relative;
 		overflow: hidden;
+	}
+
+	.cylinder-caption {
+		width: var(--header-width);
+		margin: -1.2rem 0 0;
+		transform: none;
+		padding: 0 0.6rem;
+		font-size: 0.95rem;
+		line-height: 1.45;
+		letter-spacing: 0.01em;
 	}
 
 	.cylinder-viewport {
@@ -498,9 +513,22 @@
 		}
 
 		.cylinder-frame {
+			width: min(94vw, 28rem);
 			border: 0;
 			height: auto;
 			min-height: 0;
+			position: relative;
+		}
+
+		.cylinder-frame::after {
+			content: '';
+			position: absolute;
+			left: 0.6rem;
+			right: 0.6rem;
+			bottom: 2.35rem;
+			height: 5px;
+			background: #000;
+			pointer-events: none;
 		}
 
 		.cylinder-viewport {
@@ -512,6 +540,15 @@
 		.cylinder-wrap {
 			width: min(70vw, 13rem);
 			height: min(46dvh, 17rem);
+		}
+
+		.cylinder-caption {
+			width: min(94vw, 28rem);
+			margin-top: -1.45rem;
+			transform: none;
+			padding: 0 0.6rem;
+			font-size: 0.84rem;
+			line-height: 1.4;
 		}
 
 		.cylinder {
