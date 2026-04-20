@@ -4,7 +4,7 @@
 	let { data } = $props();
 
 	const themeHref = $derived(`${base}/temi/${data.slug}`);
-	const imagePanelIds = ['a', 'b', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
+	const imagePanelIds = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 	const cropClassIds = [
 		'crop-1',
 		'crop-2',
@@ -14,34 +14,15 @@
 		'crop-6',
 		'crop-7',
 		'crop-8',
-		'crop-9'
+		'crop-9',
+		'crop-10',
+		'crop-11',
+		'crop-12',
+		'crop-13',
+		'crop-14',
+		'crop-15',
+		'crop-16'
 	];
-
-	/** @type {HTMLImageElement | null} */
-	let imgEl = $state(null);
-	/** @type {'unknown' | 'landscape' | 'portrait'} */
-	let photoOrientation = $state('unknown');
-	let photoAspectRatio = $state(0.66);
-
-	function setPhotoMeta() {
-		if (!imgEl?.naturalWidth || !imgEl?.naturalHeight) {
-			photoOrientation = 'unknown';
-			photoAspectRatio = 0.66;
-			return;
-		}
-
-		photoAspectRatio = imgEl.naturalWidth / imgEl.naturalHeight;
-		photoOrientation = photoAspectRatio >= 1 ? 'landscape' : 'portrait';
-	}
-
-	$effect(() => {
-		data.photo.url;
-		photoOrientation = 'unknown';
-		photoAspectRatio = 0.66;
-		queueMicrotask(() => {
-			if (imgEl?.complete) setPhotoMeta();
-		});
-	});
 
 	/**
 	 * Hash deterministico semplice per avere variazioni stabili per foto.
@@ -114,69 +95,41 @@
 	</div>
 	<div class="header-line" aria-hidden="true"></div>
 
-	<section
-		class="detail-content"
-		class:is-portrait={photoOrientation === 'portrait'}
-		class:is-landscape={photoOrientation === 'landscape'}
-	>
-		<div class="photo-column">
-			<figure
-				class="photo-stage"
-				class:is-portrait={photoOrientation === 'portrait'}
-				style={`--photo-ratio: ${photoAspectRatio};`}
-			>
-				<img bind:this={imgEl} src={data.photo.url} alt={data.photo.alt} loading="eager" onload={setPhotoMeta} />
+	<section class="detail-content">
+		<div class={`zoom-panels ${mosaicVariant}`} aria-label="Dettagli ravvicinati della stessa foto">
+			<figure class={`zoom-panel zoom-panel--a ${getPanelCropClass('a')}`}>
+				<img src={data.photo.url} alt={data.photo.alt} loading="eager" />
 			</figure>
-		</div>
-
-		<aside class="description-panel">
-			<div class="description-copy">
+			<figure class={`zoom-panel zoom-panel--b ${getPanelCropClass('b')}`}>
+				<img src={data.photo.url} alt="" aria-hidden="true" loading="lazy" />
+			</figure>
+			<figure class={`zoom-panel zoom-panel--c ${getPanelCropClass('c')}`}>
+				<img src={data.photo.url} alt="" aria-hidden="true" loading="lazy" />
+			</figure>
+			<figure class={`zoom-panel zoom-panel--d ${getPanelCropClass('d')}`}>
+				<img src={data.photo.url} alt="" aria-hidden="true" loading="lazy" />
+			</figure>
+			<article class="zoom-panel zoom-panel--text">
 				<p class="description-title">{data.themeTitle}</p>
 				{#if data.description}
 					<p class="description">{data.description}</p>
 				{:else}
 					<p class="description description-empty">Descrizione in arrivo.</p>
 				{/if}
-			</div>
-
-			<div class={`zoom-panels ${mosaicVariant}`} aria-label="Dettagli ravvicinati della stessa foto">
-				<figure class={`zoom-panel zoom-panel--a ${getPanelCropClass('a')}`}>
-					<img src={data.photo.url} alt="" aria-hidden="true" loading="lazy" />
-				</figure>
-				<figure class={`zoom-panel zoom-panel--b ${getPanelCropClass('b')}`}>
-					<img src={data.photo.url} alt="" aria-hidden="true" loading="lazy" />
-				</figure>
-				<article class="zoom-panel zoom-panel--text">
-					<p class="zoom-description-title">{data.themeTitle}</p>
-					{#if data.description}
-						<p class="zoom-description">{data.description}</p>
-					{:else}
-						<p class="zoom-description zoom-description-empty">Descrizione in arrivo.</p>
-					{/if}
-				</article>
-				<figure class={`zoom-panel zoom-panel--d ${getPanelCropClass('d')}`}>
-					<img src={data.photo.url} alt="" aria-hidden="true" loading="lazy" />
-				</figure>
-				<figure class={`zoom-panel zoom-panel--e ${getPanelCropClass('e')}`}>
-					<img src={data.photo.url} alt="" aria-hidden="true" loading="lazy" />
-				</figure>
-				<figure class={`zoom-panel zoom-panel--f ${getPanelCropClass('f')}`}>
-					<img src={data.photo.url} alt="" aria-hidden="true" loading="lazy" />
-				</figure>
-				<figure class={`zoom-panel zoom-panel--g ${getPanelCropClass('g')}`}>
-					<img src={data.photo.url} alt="" aria-hidden="true" loading="lazy" />
-				</figure>
-				<figure class={`zoom-panel zoom-panel--h ${getPanelCropClass('h')}`}>
-					<img src={data.photo.url} alt="" aria-hidden="true" loading="lazy" />
-				</figure>
-				<figure class={`zoom-panel zoom-panel--i ${getPanelCropClass('i')}`}>
-					<img src={data.photo.url} alt="" aria-hidden="true" loading="lazy" />
-				</figure>
-				<figure class={`zoom-panel zoom-panel--j ${getPanelCropClass('j')}`}>
-					<img src={data.photo.url} alt="" aria-hidden="true" loading="lazy" />
-				</figure>
-			</div>
-		</aside>
+			</article>
+			<figure class={`zoom-panel zoom-panel--e ${getPanelCropClass('e')}`}>
+				<img src={data.photo.url} alt="" aria-hidden="true" loading="lazy" />
+			</figure>
+			<figure class={`zoom-panel zoom-panel--f ${getPanelCropClass('f')}`}>
+				<img src={data.photo.url} alt="" aria-hidden="true" loading="lazy" />
+			</figure>
+			<figure class={`zoom-panel zoom-panel--g ${getPanelCropClass('g')}`}>
+				<img src={data.photo.url} alt="" aria-hidden="true" loading="lazy" />
+			</figure>
+			<figure class={`zoom-panel zoom-panel--h ${getPanelCropClass('h')}`}>
+				<img src={data.photo.url} alt="" aria-hidden="true" loading="lazy" />
+			</figure>
+		</div>
 	</section>
 </main>
 
@@ -244,85 +197,12 @@
 	}
 
 	.detail-content {
-		display: grid;
-		grid-template-columns: minmax(0, 1.62fr) minmax(0, 1fr);
-		align-items: end;
-		column-gap: 1.2rem;
-		row-gap: 1rem;
 		min-height: calc(100dvh - 12.6rem);
-	}
-
-	.detail-content.is-portrait {
-		grid-template-columns: max-content minmax(0, 1fr);
-		justify-content: flex-start;
-		column-gap: 0.95rem;
-	}
-
-	.detail-content.is-landscape {
-		grid-template-columns: minmax(0, 1.18fr) minmax(0, 1fr);
-		align-items: start;
-	}
-
-	.photo-column {
-		width: 100%;
-		max-width: 100%;
-		box-sizing: border-box;
-		display: flex;
-		justify-content: flex-start;
-		align-items: flex-start;
-	}
-
-	.photo-stage {
-		margin: 0;
-		overflow: clip;
-		border: 3px solid #000;
-		background: #fff;
-		box-sizing: border-box;
-		width: min(100%, calc((100dvh - 11.9rem) * var(--photo-ratio)));
-		max-width: 100%;
-	}
-
-	.photo-stage.is-portrait {
-		width: min(100%, calc((100dvh - 11.9rem) * var(--photo-ratio)));
-	}
-
-	.detail-content.is-landscape .photo-stage {
-		width: min(100%, calc((100dvh - 14.6rem) * var(--photo-ratio)));
-	}
-
-	.detail-content.is-portrait .photo-column {
-		width: fit-content;
-		max-width: 100%;
-	}
-
-	.photo-stage img {
-		display: block;
-		width: 100%;
-		height: auto;
-		max-height: calc(100dvh - 11.9rem);
-	}
-
-	.description-panel {
-		flex: 1 1 0;
-		min-width: 0;
-		height: calc(100dvh - 11.9rem);
-		padding: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 0.45rem;
-	}
-
-	.description-copy {
-		display: none;
-	}
-
-	.detail-content.is-portrait .description-panel {
-		padding-top: 0.15rem;
 	}
 
 	.description-title {
 		margin: 0;
-		font-size: 0.78rem;
+		font-size: 0.82rem;
 		font-weight: 700;
 		line-height: 1.25;
 		letter-spacing: 0.08em;
@@ -332,9 +212,9 @@
 
 	.description {
 		margin: 0;
-		font-size: 0.86rem;
-		line-height: 1.42;
-		max-width: 52ch;
+		font-size: clamp(1.04rem, 1.02vw, 1.24rem);
+		line-height: 1.48;
+		max-width: 42ch;
 	}
 
 	.description-empty {
@@ -343,22 +223,14 @@
 	}
 
 	.zoom-panels {
-		--mosaic-gap: 0.34rem;
+		--mosaic-gap: 0.4rem;
 		display: grid;
 		grid-template-columns: repeat(4, minmax(0, 1fr));
-		grid-template-rows: repeat(5, minmax(0, 1fr));
+		grid-template-rows: repeat(4, minmax(0, 1fr));
 		gap: var(--mosaic-gap);
 		margin-top: 0;
-		height: 100%;
-		grid-auto-flow: row dense;
-		flex: 1 1 auto;
-		min-height: 0;
-	}
-
-	.zoom-panel--i,
-	.zoom-panel--j {
-		grid-column: auto;
-		grid-row: auto;
+		height: calc(100dvh - 12.6rem);
+		min-height: 24rem;
 	}
 
 	.zoom-panel {
@@ -377,115 +249,149 @@
 	}
 
 	.zoom-panel.crop-1 img {
-		transform: scale(1.7);
+		transform: scale(2);
 		transform-origin: 24% 30%;
 	}
 
 	.zoom-panel.crop-2 img {
-		transform: scale(1.95);
+		transform: scale(2.3);
 		transform-origin: 72% 36%;
 	}
 
 	.zoom-panel.crop-3 img {
-		transform: scale(1.8);
+		transform: scale(2.2);
 		transform-origin: 35% 62%;
 	}
 
 	.zoom-panel.crop-4 img {
-		transform: scale(2.2);
+		transform: scale(2.45);
 		transform-origin: 80% 58%;
 	}
 
 	.zoom-panel.crop-5 img {
-		transform: scale(1.75);
+		transform: scale(2.15);
 		transform-origin: 22% 78%;
 	}
 
 	.zoom-panel.crop-6 img {
-		transform: scale(2);
+		transform: scale(2.35);
 		transform-origin: 64% 34%;
 	}
 
 	.zoom-panel.crop-7 img {
-		transform: scale(2.05);
+		transform: scale(2.28);
 		transform-origin: 42% 52%;
 	}
 
 	.zoom-panel.crop-8 img {
-		transform: scale(1.9);
+		transform: scale(2.2);
 		transform-origin: 18% 46%;
 	}
 
 	.zoom-panel.crop-9 img {
-		transform: scale(2.15);
-		transform-origin: 74% 76%;
+		transform: scale(2.5) translate(-1.5%, 1%);
+		transform-origin: 86% 16%;
+	}
+
+	.zoom-panel.crop-10 img {
+		transform: scale(2.12) rotate(-1.2deg);
+		transform-origin: 14% 18%;
+	}
+
+	.zoom-panel.crop-11 img {
+		transform: scale(2.4) translate(1.8%, -1.2%);
+		transform-origin: 56% 84%;
+	}
+
+	.zoom-panel.crop-12 img {
+		transform: scale(2.22) rotate(1.1deg);
+		transform-origin: 88% 48%;
+	}
+
+	.zoom-panel.crop-13 img {
+		transform: scale(2.34) translate(-2.2%, -0.8%);
+		transform-origin: 8% 68%;
+	}
+
+	.zoom-panel.crop-14 img {
+		transform: scale(2.18) rotate(0.9deg);
+		transform-origin: 48% 12%;
+	}
+
+	.zoom-panel.crop-15 img {
+		transform: scale(2.46) translate(0.8%, 2%);
+		transform-origin: 72% 88%;
+	}
+
+	.zoom-panel.crop-16 img {
+		transform: scale(2.26) rotate(-0.8deg);
+		transform-origin: 32% 44%;
 	}
 
 	.zoom-panel--text {
-		grid-column: 1 / span 2;
-		grid-row: 2 / span 3;
-		padding: 0.86rem 0.82rem 0.16rem;
+		grid-column: 2 / span 2;
+		grid-row: 2 / span 2;
+		padding: 0.86rem 0.82rem 0.6rem;
 		display: flex;
 		flex-direction: column;
 		gap: 0.3rem;
 		overflow: hidden;
-		align-self: start;
-		height: fit-content;
+		justify-content: stretch;
 	}
 
-	.zoom-description-title {
-		margin: 0;
-		color: #ff5f1f;
-		font-size: 0.84rem;
-		font-weight: 700;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		line-height: 1.28;
+	.zoom-panel--text .description {
+		flex: 1 1 auto;
+		max-width: none;
 	}
 
-	.zoom-description {
-		margin: 0;
-		font-size: clamp(0.94rem, 0.96vw, 1.06rem);
-		line-height: 1.45;
-	}
+	@media (min-width: 741px) {
+		.zoom-panel--text {
+			gap: 0.55rem;
+		}
 
-	.zoom-description-empty {
-		opacity: 0.7;
-		font-style: italic;
+		.zoom-panel--text .description {
+			font-size: clamp(1.2rem, 1.55vw, 1.95rem);
+			line-height: 1.32;
+		}
 	}
 
 	.zoom-panels.mosaic-1 .zoom-panel--a {
-		grid-column: 1 / span 2;
+		grid-column: 1;
 		grid-row: 1;
 	}
 
 	.zoom-panels.mosaic-1 .zoom-panel--b {
-		grid-column: 3;
+		grid-column: 2;
+		grid-row: 1;
+	}
+
+	.zoom-panels.mosaic-1 .zoom-panel--c {
+		grid-column: 4;
 		grid-row: 1 / span 2;
 	}
 
 	.zoom-panels.mosaic-1 .zoom-panel--d {
-		grid-column: 4;
-		grid-row: 1 / span 3;
+		grid-column: 1;
+		grid-row: 2 / span 2;
 	}
 
 	.zoom-panels.mosaic-1 .zoom-panel--e {
-		grid-column: 3;
+		grid-column: 4;
 		grid-row: 3 / span 2;
 	}
 
 	.zoom-panels.mosaic-1 .zoom-panel--f {
 		grid-column: 1 / span 2;
-		grid-row: 5;
+		grid-row: 4;
 	}
 
 	.zoom-panels.mosaic-1 .zoom-panel--g {
-		grid-column: 3 / span 2;
-		grid-row: 5;
+		grid-column: 3;
+		grid-row: 1;
 	}
 
 	.zoom-panels.mosaic-1 .zoom-panel--h {
-		grid-column: 4;
+		grid-column: 3 / span 2;
 		grid-row: 4;
 	}
 
@@ -496,28 +402,33 @@
 	}
 
 	.zoom-panels.mosaic-2 .zoom-panel--b {
-		grid-column: 3 / span 2;
-		grid-row: 1;
+		grid-column: 4;
+		grid-row: 1 / span 2;
+	}
+
+	.zoom-panels.mosaic-2 .zoom-panel--c {
+		grid-column: 1;
+		grid-row: 2 / span 2;
 	}
 
 	.zoom-panels.mosaic-2 .zoom-panel--d {
-		grid-column: 4;
-		grid-row: 2 / span 3;
+		grid-column: 2 / span 2;
+		grid-row: 4;
 	}
 
 	.zoom-panels.mosaic-2 .zoom-panel--e {
 		grid-column: 3;
-		grid-row: 2 / span 2;
+		grid-row: 1;
 	}
 
 	.zoom-panels.mosaic-2 .zoom-panel--f {
-		grid-column: 1 / span 2;
-		grid-row: 5;
+		grid-column: 1;
+		grid-row: 4;
 	}
 
 	.zoom-panels.mosaic-2 .zoom-panel--g {
-		grid-column: 3 / span 2;
-		grid-row: 5;
+		grid-column: 4;
+		grid-row: 3 / span 2;
 	}
 
 	.zoom-panels.mosaic-2 .zoom-panel--h {
@@ -527,45 +438,50 @@
 
 
 	.zoom-panels.mosaic-3 .zoom-panel--a {
-		grid-column: 1;
+		grid-column: 1 / span 2;
 		grid-row: 1;
 	}
 
 	.zoom-panels.mosaic-3 .zoom-panel--b {
-		grid-column: 2 / span 2;
-		grid-row: 1;
-	}
-
-	.zoom-panels.mosaic-3 .zoom-panel--d {
 		grid-column: 4;
 		grid-row: 1 / span 2;
 	}
 
+	.zoom-panels.mosaic-3 .zoom-panel--c {
+		grid-column: 1;
+		grid-row: 2;
+	}
+
+	.zoom-panels.mosaic-3 .zoom-panel--d {
+		grid-column: 1;
+		grid-row: 3 / span 2;
+	}
+
 	.zoom-panels.mosaic-3 .zoom-panel--e {
-		grid-column: 3;
-		grid-row: 2 / span 2;
+		grid-column: 4;
+		grid-row: 3 / span 2;
 	}
 
 	.zoom-panels.mosaic-3 .zoom-panel--f {
-		grid-column: 1 / span 2;
-		grid-row: 5;
+		grid-column: 2;
+		grid-row: 4;
 	}
 
 	.zoom-panels.mosaic-3 .zoom-panel--g {
-		grid-column: 3 / span 2;
-		grid-row: 5;
+		grid-column: 2 / span 2;
+		grid-row: 1;
 	}
 
 	.zoom-panels.mosaic-3 .zoom-panel--h {
-		grid-column: 4;
-		grid-row: 3 / span 2;
+		grid-column: 3;
+		grid-row: 4;
 	}
 
 
 	@media (max-width: 740px) {
 		.photo-detail {
-			min-height: calc(100dvh - 4.6rem);
-			padding: 0.5rem 0.65rem 0.75rem;
+			min-height: auto;
+			padding: 0.5rem 0.65rem 7.2rem;
 		}
 
 		.photo-top {
@@ -580,37 +496,54 @@
 			margin-bottom: 0.65rem;
 		}
 
-		.detail-content {
-			display: flex;
-			flex-direction: column;
-			gap: 0.85rem;
-		}
-
-		.photo-column {
-			width: 100%;
-			max-width: 100%;
-		}
-
-		.photo-stage {
-			max-height: none;
-			width: 100%;
-		}
-
-		.description-panel {
-			padding: 0;
-		}
-
-		.description-copy {
-			display: block;
-		}
-
-		.description {
-			font-size: 0.82rem;
-		}
-
 		.zoom-panels {
-			display: none;
+			height: auto;
+			min-height: 0;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			grid-template-rows: auto;
 		}
 
+		.detail-content {
+			min-height: 0;
+		}
+
+		.zoom-panel {
+			aspect-ratio: 1 / 1;
+		}
+
+		.zoom-panel--text {
+			aspect-ratio: auto;
+			min-height: 10rem;
+			grid-column: 1 / -1;
+			grid-row: auto;
+		}
+
+		.zoom-panels.mosaic-1 .zoom-panel--a,
+		.zoom-panels.mosaic-1 .zoom-panel--b,
+		.zoom-panels.mosaic-1 .zoom-panel--c,
+		.zoom-panels.mosaic-1 .zoom-panel--d,
+		.zoom-panels.mosaic-1 .zoom-panel--e,
+		.zoom-panels.mosaic-1 .zoom-panel--f,
+		.zoom-panels.mosaic-1 .zoom-panel--g,
+		.zoom-panels.mosaic-1 .zoom-panel--h,
+		.zoom-panels.mosaic-2 .zoom-panel--a,
+		.zoom-panels.mosaic-2 .zoom-panel--b,
+		.zoom-panels.mosaic-2 .zoom-panel--c,
+		.zoom-panels.mosaic-2 .zoom-panel--d,
+		.zoom-panels.mosaic-2 .zoom-panel--e,
+		.zoom-panels.mosaic-2 .zoom-panel--f,
+		.zoom-panels.mosaic-2 .zoom-panel--g,
+		.zoom-panels.mosaic-2 .zoom-panel--h,
+		.zoom-panels.mosaic-3 .zoom-panel--a,
+		.zoom-panels.mosaic-3 .zoom-panel--b,
+		.zoom-panels.mosaic-3 .zoom-panel--c,
+		.zoom-panels.mosaic-3 .zoom-panel--d,
+		.zoom-panels.mosaic-3 .zoom-panel--e,
+		.zoom-panels.mosaic-3 .zoom-panel--f,
+		.zoom-panels.mosaic-3 .zoom-panel--g,
+		.zoom-panels.mosaic-3 .zoom-panel--h {
+			grid-column: auto;
+			grid-row: auto;
+		}
 	}
 </style>

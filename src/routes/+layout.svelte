@@ -315,9 +315,10 @@
 		}
 
 		main.temi-detail-page {
-			height: calc(100dvh - 4.6rem - 3.4rem);
-			padding-bottom: 0;
-			overflow: hidden;
+			height: auto;
+			min-height: calc(100dvh - 4.6rem);
+			padding-bottom: 6.8rem;
+			overflow: visible;
 		}
 
 		main.album-page {

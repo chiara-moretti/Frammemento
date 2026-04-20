@@ -219,6 +219,7 @@
 				<span class="probe-char">{c}</span>
 			{/each}
 		</div>
+		<div class="word-hover-zone" aria-hidden="true"></div>
 
 		<div class="ety ety--fram">
 			Dal latino <i>fragmentum</i>, «pezzo infranto».
@@ -592,6 +593,13 @@
 			text-transform 0.35s ease;
 	}
 
+	/* Estende l'area hover senza cambiare la resa visiva del glifo */
+	.token::before {
+		content: '';
+		position: absolute;
+		inset: -0.08rem;
+	}
+
 	.token--final {
 		animation-name: token-path-final;
 	}
@@ -703,6 +711,8 @@
 			visibility 0s linear 0.14s;
 	}
 
+	.stage--hover-ready:has(.word-hover-zone:hover) .token--fram,
+	.stage--hover-ready:has(.word-hover-zone:hover) .token--mem,
 	.stage--hover-ready:has(.token:hover) .token--fram,
 	.stage--hover-ready:has(.token:hover) .token--mem {
 		transform: translate(-50%, -50%) translate(var(--tx0), var(--ty0)) scale(1);
@@ -712,10 +722,12 @@
 		opacity: 1;
 	}
 
+	.stage--hover-ready:has(.word-hover-zone:hover) .token--rest,
 	.stage--hover-ready:has(.token:hover) .token--rest {
 		pointer-events: auto;
 	}
 
+	.stage--hover-ready:has(.word-hover-zone:hover) .ety,
 	.stage--hover-ready:has(.token:hover) .ety {
 		animation: none;
 		opacity: 1;
@@ -727,10 +739,21 @@
 			visibility 0s linear 0s;
 	}
 
+	.stage--hover-ready:has(.word-hover-zone:hover) .about-cta,
 	.stage--hover-ready:has(.token:hover) .about-cta {
 		top: calc(
 			50% + var(--about-center-offset-y) + var(--about-cta-offset-y) + var(--about-cta-hover-extra-offset-y)
 		);
+	}
+
+	.word-hover-zone {
+		position: absolute;
+		left: 50%;
+		top: calc(50% + var(--about-center-offset-y));
+		z-index: 5;
+		transform: translate(-50%, -50%);
+		width: min(78vw, 28rem);
+		height: clamp(2.2rem, 5vw, 3.6rem);
 	}
 
 	@media (max-width: 740px) {

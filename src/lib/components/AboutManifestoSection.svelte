@@ -280,6 +280,11 @@
 			order: 2;
 		}
 
+		.manifesto p {
+			font-size: 0.97rem;
+			line-height: 1.5;
+		}
+
 		.mobile-random-photo {
 			display: block;
 			position: absolute;
