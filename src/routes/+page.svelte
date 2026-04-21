@@ -5,6 +5,7 @@
 	import AboutManifestoSection from '$lib/components/AboutManifestoSection.svelte';
 	import CylinderPhotoSection from '$lib/components/CylinderPhotoSection.svelte';
 	import HomeHero3DSection from '$lib/components/HomeHero3DSection.svelte';
+	import HomePhotoWheelSection from '$lib/components/HomePhotoWheelSection.svelte';
 
 	const albumPdf = `${base}/album.pdf`;
 
@@ -36,6 +37,8 @@
 	<section class="first-screen">
 		<HomeHero3DSection />
 	</section>
+
+	<HomePhotoWheelSection />
 
 	<footer class="mobile-footer" aria-label="Link social">
 		<a
